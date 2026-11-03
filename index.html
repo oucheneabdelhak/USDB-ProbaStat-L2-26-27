@@ -12,6 +12,10 @@
   --muted:#5d6b88;
   --blue:#2f5fa8;
   --blue-soft:#e8f0fc;
+  --green:#2e7d5b;
+  --green-soft:#e6f4ed;
+  --orange:#c26a1b;
+  --orange-soft:#fdf0e1;
   --line:#dfe5f1;
   --radius:14px;
   --shadow:0 2px 10px rgba(30,50,90,.06);
@@ -19,20 +23,23 @@
 @media (prefers-color-scheme: dark){
   :root{
     --bg:#121826;--card:#1b2336;--ink:#e6ebf7;--muted:#9aa8c7;
-    --blue:#7aa7ee;--blue-soft:#202c47;--line:#2c3856;
+    --blue:#7aa7ee;--blue-soft:#202c47;
+    --green:#6cc79e;--green-soft:#1d3329;
+    --orange:#f0a766;--orange-soft:#3a2a1a;
+    --line:#2c3856;
   }
 }
 *{box-sizing:border-box}
 html,body{margin:0}
+html{scroll-behavior:smooth}
 body{
   font-family:"Inter","Segoe UI",system-ui,-apple-system,sans-serif;
-  background:var(--bg);
-  color:var(--ink);
-  line-height:1.6;
-  -webkit-font-smoothing:antialiased;
+  background:var(--bg); color:var(--ink);
+  line-height:1.6; -webkit-font-smoothing:antialiased;
 }
-.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(1rem,3vw,2rem)}
+.wrap{max-width:1150px;margin:0 auto;padding:0 clamp(1rem,3vw,2rem)}
 
+/* ---------- hero ---------- */
 header.hero{
   padding:clamp(2rem,6vh,4rem) 0 clamp(1.5rem,4vh,3rem);
   border-bottom:1px solid var(--line);
@@ -41,176 +48,196 @@ header.hero{
     radial-gradient(700px 300px at 100% 0%, #eef2ff 0%, transparent 55%);
 }
 .kicker{
-  display:inline-block;
-  font-size:.75rem;
-  font-weight:800;
-  letter-spacing:.14em;
-  text-transform:uppercase;
-  color:var(--blue);
-  background:rgba(47,95,168,.1);
-  padding:.3rem .8rem;
-  border-radius:99px;
-  margin-bottom:1rem;
+  display:inline-block; font-size:.75rem; font-weight:800;
+  letter-spacing:.14em; text-transform:uppercase;
+  color:var(--blue); background:rgba(47,95,168,.1);
+  padding:.3rem .8rem; border-radius:99px; margin-bottom:1rem;
 }
 h1{
-  font-size:clamp(2rem,4.5vw,3rem);
-  margin:.2em 0 .15em;
-  letter-spacing:-.02em;
-  line-height:1.1;
+  font-size:clamp(2rem,4.5vw,3rem); margin:.2em 0 .15em;
+  letter-spacing:-.02em; line-height:1.1;
 }
 .lead{
-  color:var(--muted);
-  font-size:1.05rem;
-  max-width:46rem;
-  margin:0;
+  color:var(--muted); font-size:1.05rem;
+  max-width:46rem; margin:0;
 }
 .meta{
-  display:flex;
-  gap:1.2rem;
-  flex-wrap:wrap;
-  margin-top:1.2rem;
-  font-size:.9rem;
-  color:var(--muted);
+  display:flex; gap:1.2rem; flex-wrap:wrap;
+  margin-top:1.2rem; font-size:.9rem; color:var(--muted);
 }
 .meta b{color:var(--ink);font-weight:600}
 
+.quicknav{
+  display:flex; gap:.6rem; flex-wrap:wrap;
+  margin-top:1.6rem;
+}
+.quicknav a{
+  display:inline-flex; align-items:center; gap:.4rem;
+  font-size:.85rem; font-weight:600; text-decoration:none;
+  color:var(--ink); background:var(--card);
+  border:1px solid var(--line); border-radius:99px;
+  padding:.45rem .95rem;
+  transition:.15s;
+}
+.quicknav a:hover{border-color:var(--blue);color:var(--blue);transform:translateY(-1px)}
+
+/* ---------- sections ---------- */
 main{padding:clamp(2rem,4vh,3rem) 0}
+section.block{padding:clamp(1.5rem,4vh,2.5rem) 0}
+section.block + section.block{border-top:1px solid var(--line)}
 
 .section-head{
-  display:flex;
-  align-items:baseline;
-  justify-content:space-between;
-  gap:1rem;
-  margin-bottom:1.2rem;
-  flex-wrap:wrap;
+  display:flex; align-items:baseline; justify-content:space-between;
+  gap:1rem; margin-bottom:1.2rem; flex-wrap:wrap;
 }
 .section-head h2{
-  font-size:1.4rem;
-  margin:0;
-  letter-spacing:-.01em;
+  font-size:1.4rem; margin:0; letter-spacing:-.01em;
+  display:flex; align-items:center; gap:.6rem;
 }
+.section-head h2 .ico{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:2rem; height:2rem; border-radius:.55rem;
+  background:var(--blue-soft); color:var(--blue);
+}
+.section-head h2 .ico svg{width:1.1rem;height:1.1rem}
 .section-head .count{
-  font-size:.85rem;
-  color:var(--muted);
-  font-variant-numeric:tabular-nums;
+  font-size:.85rem; color:var(--muted); font-variant-numeric:tabular-nums;
+}
+.section-sub{
+  color:var(--muted); font-size:.92rem; margin:-.6rem 0 1.2rem;
+  max-width:52rem;
 }
 
+/* ---------- cards ---------- */
 .grid{
   display:grid;
   grid-template-columns:repeat(auto-fill, minmax(320px,1fr));
   gap:1rem;
 }
 
-.session{
+.card{
   background:var(--card);
   border:1px solid var(--line);
   border-radius:var(--radius);
   padding:1.2rem 1.3rem;
   box-shadow:var(--shadow);
-  display:flex;
-  flex-direction:column;
+  display:flex; flex-direction:column;
   transition:transform .15s, box-shadow .15s;
 }
-.session:not(.soon):hover{
+.card:not(.soon):hover{
   transform:translateY(-2px);
   box-shadow:0 6px 20px rgba(30,50,90,.1);
 }
-.session.soon{opacity:.72}
+.card.soon{opacity:.72}
 
-.session-head{
-  display:flex;
-  align-items:center;
-  gap:.65rem;
+.card-head{
+  display:flex; align-items:center; gap:.65rem;
   margin-bottom:.65rem;
 }
 .badge{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  min-width:2.2rem;
-  height:2.2rem;
-  padding:0 .55rem;
+  display:inline-flex; align-items:center; justify-content:center;
+  min-width:2.4rem; height:2.2rem; padding:0 .55rem;
   border-radius:.6rem;
-  background:var(--blue);
-  color:#fff;
-  font-weight:800;
-  font-size:1rem;
-  letter-spacing:-.01em;
+  background:var(--blue); color:#fff;
+  font-weight:800; font-size:.95rem; letter-spacing:-.01em;
 }
-.chapter-tag{
-  font-size:.72rem;
-  font-weight:700;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-  color:var(--muted);
-}
-.session.soon .badge{background:#b7c2da}
-@media (prefers-color-scheme:dark){.session.soon .badge{background:#3a455e}}
+.card.soon .badge{background:#b7c2da}
+@media (prefers-color-scheme:dark){.card.soon .badge{background:#3a455e}}
 
-.session h3{
-  font-size:1.1rem;
-  margin:0 0 .4rem;
-  line-height:1.3;
-  letter-spacing:-.01em;
-}
-.session p{
-  margin:0 0 1rem;
+.chapter-tag{
+  font-size:.72rem; font-weight:700;
+  letter-spacing:.08em; text-transform:uppercase;
   color:var(--muted);
-  font-size:.92rem;
-  line-height:1.55;
-  flex:1;
+}
+
+.card h3{
+  font-size:1.1rem; margin:0 0 .4rem;
+  line-height:1.3; letter-spacing:-.01em;
+}
+.card p{
+  margin:0 0 1rem;
+  color:var(--muted); font-size:.92rem;
+  line-height:1.55; flex:1;
 }
 
 .actions{
-  display:flex;
-  gap:.5rem;
-  flex-wrap:wrap;
+  display:flex; gap:.5rem; flex-wrap:wrap; align-items:center;
 }
 .btn{
-  display:inline-flex;
-  align-items:center;
-  gap:.35rem;
-  font:inherit;
-  font-size:.88rem;
-  font-weight:650;
+  display:inline-flex; align-items:center; gap:.35rem;
+  font:inherit; font-size:.88rem; font-weight:650;
   text-decoration:none;
-  padding:.5rem .95rem;
-  border-radius:.6rem;
+  padding:.5rem .95rem; border-radius:.6rem;
   border:1px solid var(--line);
-  background:var(--card);
-  color:var(--blue);
-  cursor:pointer;
-  transition:.15s;
+  background:var(--card); color:var(--blue);
+  cursor:pointer; transition:.15s;
 }
 .btn:hover{background:var(--blue-soft);border-color:var(--blue)}
-.btn.primary{background:var(--blue);color:#fff;border-color:var(--blue)}
+.btn.primary{background:var(--blue); color:#fff; border-color:var(--blue)}
 .btn.primary:hover{filter:brightness(1.08)}
 .btn.disabled{
-  color:var(--muted);
-  background:var(--bg);
-  cursor:not-allowed;
-  pointer-events:none;
+  color:var(--muted); background:var(--bg);
+  cursor:not-allowed; pointer-events:none;
 }
-.btn svg{width:15px;height:15px}
+.btn svg{width:15px; height:15px; flex-shrink:0}
 
+/* small secondary link (chapter notes) */
+.notes-link{
+  display:inline-flex; align-items:center; gap:.35rem;
+  margin-top:.6rem;
+  font-size:.8rem; color:var(--muted);
+  text-decoration:none;
+  transition:.15s;
+}
+.notes-link:hover{color:var(--blue)}
+.notes-link svg{width:13px;height:13px}
+
+/* ---------- tutorials banner ---------- */
+.td-banner{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-left:5px solid var(--orange);
+  border-radius:var(--radius);
+  padding:1.4rem 1.6rem;
+  box-shadow:var(--shadow);
+  display:flex; gap:1.2rem; align-items:center; flex-wrap:wrap;
+  justify-content:space-between;
+}
+.td-banner .td-text{flex:1; min-width:16rem}
+.td-banner h3{
+  font-size:1.15rem; margin:0 0 .3rem;
+  display:flex; align-items:center; gap:.5rem;
+}
+.td-banner p{
+  margin:0; color:var(--muted); font-size:.93rem;
+}
+.td-banner .ico-td{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:2rem; height:2rem; border-radius:.55rem;
+  background:var(--orange-soft); color:var(--orange);
+}
+.td-banner .ico-td svg{width:1.1rem;height:1.1rem}
+
+.td-banner.soon{opacity:.8}
+.td-banner.soon .btn{color:var(--muted);background:var(--bg);cursor:not-allowed;pointer-events:none;border-color:var(--line)}
+
+/* ---------- info ---------- */
 .info{
-  margin-top:2rem;
+  margin-top:1.5rem;
   padding:1rem 1.2rem;
   background:var(--card);
   border:1px solid var(--line);
   border-left:4px solid var(--blue);
   border-radius:.8rem;
-  font-size:.9rem;
-  color:var(--muted);
+  font-size:.9rem; color:var(--muted);
 }
 .info b{color:var(--ink)}
 
 footer{
   padding:2rem 0 3rem;
   border-top:1px solid var(--line);
-  margin-top:3rem;
-  font-size:.85rem;
-  color:var(--muted);
+  margin-top:2rem;
+  font-size:.85rem; color:var(--muted);
   text-align:center;
 }
 footer a{color:var(--blue);text-decoration:none}
@@ -224,58 +251,150 @@ footer a:hover{text-decoration:underline}
     <span class="kicker">Course materials · 2026–2027</span>
     <h1>Probability and Statistics 1</h1>
     <p class="lead">
-      Interactive session slides and printable PDFs. Sessions are released as the course progresses.
+      Complete course notes as printable PDFs, interactive HTML session decks, and tutorial
+      exercise sheets — all in one place.
     </p>
     <div class="meta">
       <span><b>Instructor:</b> OUCHENE Abdelhak</span>
-      <span><b>Sessions:</b> <span id="count"></span></span>
-      <span><b>Format:</b> HTML slides + PDF</span>
+      <span><b>Chapters:</b> 4 PDF notes</span>
+      <span><b>Sessions:</b> <span id="session-count">—</span></span>
     </div>
+    <nav class="quicknav" aria-label="Jump to a section">
+      <a href="#notes">📄 Course notes (PDF)</a>
+      <a href="#sessions">🎬 Interactive sessions</a>
+      <a href="#tutorials">✏️ Tutorials (TD)</a>
+    </nav>
   </div>
 </header>
 
 <main>
   <div class="wrap">
-    <div class="section-head">
-      <h2>All sessions</h2>
-      <span class="count" id="avail"></span>
-    </div>
-    <div class="grid" id="grid"></div>
+
+    <!-- ================================================================
+         SECTION 1: COURSE NOTES (PDF)
+         ================================================================ -->
+    <section class="block" id="notes">
+      <div class="section-head">
+        <h2>
+          <span class="ico">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+          </span>
+          Course notes (PDF)
+        </h2>
+        <span class="count" id="notes-count"></span>
+      </div>
+      <p class="section-sub">
+        The complete written material, one file per chapter. Downloadable and printable;
+        these PDFs are the reference document for the whole course.
+      </p>
+      <div class="grid" id="notes-grid"></div>
+    </section>
+
+    <!-- ================================================================
+         SECTION 2: INTERACTIVE SESSIONS (HTML)
+         ================================================================ -->
+    <section class="block" id="sessions">
+      <div class="section-head">
+        <h2>
+          <span class="ico">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          </span>
+          Interactive sessions
+        </h2>
+        <span class="count" id="sessions-count"></span>
+      </div>
+      <p class="section-sub">
+        Slide decks used in class, with worked examples, interactive demos and self-check quizzes.
+        Sessions are released as the semester progresses — the chapter notes they rely on are
+        available above from day one.
+      </p>
+      <div class="grid" id="sessions-grid"></div>
+    </section>
+
+    <!-- ================================================================
+         SECTION 3: TUTORIALS (TD) — separate repo
+         ================================================================ -->
+    <section class="block" id="tutorials">
+      <div class="section-head">
+        <h2>
+          <span class="ico">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
+          </span>
+          Tutorials (TD)
+        </h2>
+      </div>
+      <p class="section-sub">
+        Exercise sheets, solutions and worked examples for the tutorial sessions — kept in a
+        dedicated repository that follows the progression of the chapters.
+      </p>
+      <div id="td-container"></div>
+    </section>
+
     <div class="info">
-      <b>How to use this page.</b> Click <b>Open slides</b> to view the interactive HTML session in your browser — use the ← → arrow keys or the on-screen buttons to navigate. Click <b>PDF</b> to download or print the same material. Sessions marked <i>Coming soon</i> will be published as the course progresses.
+      <b>How to use this page.</b> Click a chapter to download its PDF. Click <b>Open slides</b> to view a
+      session's interactive deck in your browser — use the <b>← →</b> arrow keys or the on-screen buttons to
+      navigate. Sessions marked <i>Coming soon</i> will be published as the course progresses; the PDF notes
+      for their chapter are already available.
     </div>
+
   </div>
 </main>
 
 <footer>
   <div class="wrap">
-    <p>© 2026–2027 OUCHENE Abdelhak · Source on <a href="https://github.com/" target="_blank" rel="noopener">GitHub</a></p>
+    <p>© 2026–2027 OUCHENE Abdelhak · <a id="repo-link" href="#" target="_blank" rel="noopener">Source on GitHub</a></p>
   </div>
 </footer>
 
 <script>
 /* =============================================================
-   COURSE CONTENT — edit this block only
+   1. COURSE NOTES (PDF) — one card per chapter file
+   Add or reorder chapters by editing this array.
+   ============================================================= */
+const CHAPTERS = [
+  {
+    id: 0,
+    label: "Chapitre 0",
+    title: "Course introduction",
+    desc: "Why statistics and probability, what statistics is, the statistical approach, the plan and assessment of the course.",
+    pdf: "pdfs/Chapitre0.pdf"
+  },
+  {
+    id: 1,
+    label: "Chapitre 1",
+    title: "Basic statistical notions and vocabulary",
+    desc: "Populations, samples, characters, qualitative and quantitative variables, frequency tables, pie charts, bar charts, histograms, cumulative curves.",
+    pdf: "pdfs/Chapitre1.pdf"
+  },
+  {
+    id: 2,
+    label: "Chapitre 2",
+    title: "Numerical representation of data",
+    desc: "Position parameters (mode, means, median, quartiles) and dispersion parameters (range, variance, standard deviation, coefficient of variation, boxplot).",
+    pdf: "pdfs/Chapitre2.pdf"
+  },
+  {
+    id: 3,
+    label: "Chapitre 3",
+    title: "Probability calculus",
+    desc: "Combinatorics, events and set algebra, probability spaces and axioms, conditional probability, total probability, Bayes' formula, independence.",
+    pdf: "pdfs/Chapitre3.pdf"
+  }
+];
 
-   For each session:
-     n      : session number (displayed on the card)
-     chapter: short chapter label (displayed as a tag)
-     title  : session title
-     desc   : one-sentence description
-     slides : path to the HTML file, or null if not yet available
-     pdf    : path to the PDF file, or null if not yet available
-
-   When a new session is ready, change its `slides` / `pdf` fields
-   from null to the actual path. That's it — the page updates itself.
+/* =============================================================
+   2. INTERACTIVE SESSIONS (HTML decks)
+   `slides` = path to the HTML file, or null if not yet published.
+   `pdf`    = chapter notes the session relies on (optional).
    ============================================================= */
 const SESSIONS = [
   {
     n: 1,
     chapter: "Introduction + Ch. 1",
     title: "Course introduction & the vocabulary of statistics",
-    desc: "Why statistics and probability, what statistics is, the statistical approach, the plan of the course, and the vocabulary of Chapter 1: population, sample, characters, frequency tables, pie and bar charts.",
+    desc: "Why statistics and probability, the statistical approach, the plan of the course, and the vocabulary of Chapter 1: population, sample, characters, frequency tables, pie and bar charts.",
     slides: "session-01.html",
-    pdf: "pdfs/session-01.pdf"
+    pdf: "pdfs/Chapitre1.pdf"
   },
   {
     n: 2,
@@ -283,7 +402,7 @@ const SESSIONS = [
     title: "Quantitative characters and grouped data",
     desc: "Discrete and continuous variables, classes and class centres, the choice of the number of classes, histogram, polygon of frequencies, cumulative frequency curves.",
     slides: null,
-    pdf: null
+    pdf: "pdfs/Chapitre1.pdf"
   },
   {
     n: 3,
@@ -291,7 +410,7 @@ const SESSIONS = [
     title: "Position parameters",
     desc: "Mode (discrete and continuous), arithmetic and weighted means, geometric, harmonic and quadratic means, the chain of means, median and quartiles, interquartile range.",
     slides: null,
-    pdf: null
+    pdf: "pdfs/Chapitre2.pdf"
   },
   {
     n: 4,
@@ -299,7 +418,7 @@ const SESSIONS = [
     title: "Dispersion parameters and the boxplot",
     desc: "Range, mean absolute deviation, variance and standard deviation, König's formula, coefficient of variation, the boxplot and the 1.5·IQR rule for outliers.",
     slides: null,
-    pdf: null
+    pdf: "pdfs/Chapitre2.pdf"
   },
   {
     n: 5,
@@ -307,7 +426,7 @@ const SESSIONS = [
     title: "Combinatorics and the algebra of events",
     desc: "Fundamental principle, arrangements, permutations, combinations; random experiments, sample space, events, set algebra, algebras and σ-algebras of events, Kolmogorov's axioms.",
     slides: null,
-    pdf: null
+    pdf: "pdfs/Chapitre3.pdf"
   },
   {
     n: 6,
@@ -315,50 +434,118 @@ const SESSIONS = [
     title: "Conditional probability, Bayes, independence",
     desc: "Conditional probability, multiplication rule, complete systems, total probability formula, Bayes' formula and the base-rate fallacy, independence of events and independent experiments.",
     slides: null,
-    pdf: null
+    pdf: "pdfs/Chapitre3.pdf"
   }
 ];
 
 /* =============================================================
-   Render (you shouldn't need to touch anything below)
+   3. TUTORIALS (TD) — separate repository
+   Set `repo` to your TD repo URL when it is published,
+   or leave as null to display a "coming soon" state.
    ============================================================= */
-const grid = document.getElementById('grid');
-const total = SESSIONS.length;
-const available = SESSIONS.filter(s => s.slides).length;
+const TD_REPO = null;
+/* Example when published:
+   const TD_REPO = "https://github.com/YOUR-USERNAME/ps1-td";
+*/
 
-document.getElementById('count').textContent = total;
-document.getElementById('avail').textContent =
-  available + ' of ' + total + ' available';
+/* Optional: link to this repo from the footer */
+const MAIN_REPO = "https://github.com/YOUR-USERNAME/ps1-course";
 
-const slidesIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>';
-const pdfIcon    = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>';
+/* =============================================================
+   Render — you shouldn't need to edit below this line
+   ============================================================= */
+const $ = id => document.getElementById(id);
+
+/* --- icons --- */
+const icoPdf = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>';
+const icoSlides = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>';
+const icoSmallDoc = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>';
+const icoTd = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>';
+
+/* --- 1. Course notes (PDF) --- */
+const notesGrid = $('notes-grid');
+const notesAvailable = CHAPTERS.filter(c => c.pdf).length;
+$('notes-count').textContent = notesAvailable + ' file' + (notesAvailable === 1 ? '' : 's');
+
+CHAPTERS.forEach(c => {
+  const card = document.createElement('article');
+  card.className = 'card';
+  card.innerHTML = `
+    <div class="card-head">
+      <span class="badge">${c.label.replace('Chapitre ', 'Ch. ')}</span>
+      <span class="chapter-tag">${c.label} · PDF</span>
+    </div>
+    <h3>${c.title}</h3>
+    <p>${c.desc}</p>
+    <div class="actions">
+      <a class="btn primary" href="${c.pdf}" target="_blank" rel="noopener">
+        ${icoPdf} Download PDF
+      </a>
+    </div>
+  `;
+  notesGrid.appendChild(card);
+});
+
+/* --- 2. Sessions (HTML) --- */
+const sessionsGrid = $('sessions-grid');
+const sessionsAvailable = SESSIONS.filter(s => s.slides).length;
+$('session-count').textContent = sessionsAvailable + ' / ' + SESSIONS.length + ' published';
+$('sessions-count').textContent = sessionsAvailable + ' of ' + SESSIONS.length + ' published';
 
 SESSIONS.forEach(s => {
   const card = document.createElement('article');
-  card.className = 'session' + (s.slides ? '' : ' soon');
+  card.className = 'card' + (s.slides ? '' : ' soon');
 
   const slidesBtn = s.slides
-    ? `<a class="btn primary" href="${s.slides}">${slidesIcon} Open slides</a>`
-    : `<span class="btn disabled">${slidesIcon} Slides — coming soon</span>`;
+    ? `<a class="btn primary" href="${s.slides}">${icoSlides} Open slides</a>`
+    : `<span class="btn disabled">${icoSlides} Slides — coming soon</span>`;
 
-  const pdfBtn = s.pdf
-    ? `<a class="btn" href="${s.pdf}" target="_blank" rel="noopener">${pdfIcon} PDF</a>`
-    : `<span class="btn disabled">${pdfIcon} PDF — soon</span>`;
+  const notesLink = s.pdf
+    ? `<a class="notes-link" href="${s.pdf}" target="_blank" rel="noopener">
+         ${icoSmallDoc} Chapter notes (PDF) →
+       </a>`
+    : '';
 
   card.innerHTML = `
-    <div class="session-head">
+    <div class="card-head">
       <span class="badge">${String(s.n).padStart(2,'0')}</span>
       <span class="chapter-tag">${s.chapter}</span>
     </div>
     <h3>${s.title}</h3>
     <p>${s.desc}</p>
-    <div class="actions">
-      ${slidesBtn}
-      ${pdfBtn}
-    </div>
+    <div class="actions">${slidesBtn}</div>
+    ${notesLink}
   `;
-  grid.appendChild(card);
+  sessionsGrid.appendChild(card);
 });
+
+/* --- 3. Tutorials (TD) banner --- */
+const tdBox = $('td-container');
+const hasTd = !!TD_REPO;
+const td = document.createElement('div');
+td.className = 'td-banner' + (hasTd ? '' : ' soon');
+td.innerHTML = `
+  <div class="td-text">
+    <h3>
+      <span class="ico-td">${icoTd}</span>
+      ${hasTd ? 'Exercise sheets and solutions' : 'Tutorial sessions — coming soon'}
+    </h3>
+    <p>
+      ${hasTd
+        ? 'Worked exercises, solutions and correction notes, session by session.'
+        : 'A dedicated repository for tutorial sheets, solutions and worked exercises is in preparation. It will be linked here as soon as it is published.'}
+    </p>
+  </div>
+  <div>
+    ${hasTd
+      ? `<a class="btn primary" href="${TD_REPO}" target="_blank" rel="noopener">Open tutorials repo →</a>`
+      : `<span class="btn">Coming soon</span>`}
+  </div>
+`;
+tdBox.appendChild(td);
+
+/* --- footer repo link --- */
+if (MAIN_REPO) $('repo-link').href = MAIN_REPO;
 </script>
 
 </body>
