@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Probability and Statistics 1 — Course introduction and Chapter 1 (Session 1)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<style>
+:root{
+  --bg:#f4f6fb; --card:#ffffff; --ink:#1f2a44; --muted:#5d6b88;
+  --blue:#2f5fa8; --blue-soft:#e8f0fc; --green:#2e7d5b; --green-soft:#e6f4ed;
+  --purple:#6b4fa3; --purple-soft:#efeaf8; --orange:#c26a1b; --orange-soft:#fdf0e1;
+  --red:#b83b4a; --line:#dfe5f1;
+  --c1:#2f5fa8; --c2:#e08a3c; --c3:#3fa37a; --c4:#9a6bc4;
+}
+@media (prefers-color-scheme: dark){
+  :root{--bg:#121826;--card:#1b2336;--ink:#e6ebf7;--muted:#9aa8c7;--blue:#7aa7ee;--blue-soft:#202c47;
+  --green:#6cc79e;--green-soft:#1d3329;--purple:#b79af0;--purple-soft:#2a2342;--orange:#f0a766;--orange-soft:#3a2a1a;--line:#2c3856;--red:#ef7f8c}
+}
+
+/* =========================================================
+   Fluid root size: this is what makes the whole deck scale
+   to a presentation screen. Every rem below follows it.
+   ========================================================= */
+html{
+  font-size: clamp(17px, 1.25vmin + 8px, 30px);
+}
+
+*{ box-sizing:border-box; }
+html, body{ height:100%; margin:0; }
+body{
+  font-family:"Inter","Segoe UI",system-ui,-apple-system,sans-serif;
+  background:var(--bg); color:var(--ink);
+  font-size:1rem; line-height:1.55;
+  overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+
+#progress{
+  position:fixed; top:0; left:0;
+  height:5px; width:0;
+  background:linear-gradient(90deg,var(--blue),var(--c3));
+  transition:width .35s; z-index:10;
+}
+
+header.top{
+  position:fixed; top:5px; left:0; right:0;
+  display:flex; justify-content:space-between; align-items:center;
+  padding:.55rem clamp(1rem, 3vw, 2.5rem);
+  font-size:.82rem; color:var(--muted); z-index:5;
+  gap:1rem;
+}
+
+#deck{
+  position:absolute;
+  inset: clamp(42px, 6vh, 64px) 0 clamp(64px, 8vh, 96px) 0;
+  overflow:hidden;
+}
+
+.slide{
+  position:absolute; inset:0;
+  overflow-y:auto;
+  padding: clamp(1rem, 2.4vh, 1.8rem) clamp(1.2rem, 4vw, 4rem) 2.5rem;
+  opacity:0; pointer-events:none; transform:translateX(30px);
+  transition:opacity .35s, transform .35s;
+}
+.slide.active{ opacity:1; pointer-events:auto; transform:none; }
+
+/* Wider content column so it fills a presentation screen */
+.wrap{ max-width:min(1500px, 95vw); margin:0 auto; }
+
+h1{ font-size:2.6rem; margin:.2em 0; letter-spacing:-.02em; line-height:1.1; }
+h2{ font-size:1.85rem; margin:0 0 .55em; letter-spacing:-.01em; line-height:1.2; }
+h2 .num{
+  display:inline-block; background:var(--blue); color:#fff;
+  border-radius:.35rem; padding:0 .55em; margin-right:.4em;
+  font-size:.62em; vertical-align:middle;
+}
+.sub{ color:var(--muted); font-size:1.08rem; }
+
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:1rem;
+  padding: clamp(.85rem, 1.5vh, 1.2rem) clamp(1.05rem, 1.8vw, 1.5rem);
+  margin: clamp(.65rem, 1.1vh, 1rem) 0;
+  box-shadow:0 2px 10px rgba(30,50,90,.05);
+}
+.def  { border-left:5px solid var(--blue);   background:var(--blue-soft); }
+.ex   { border-left:5px solid var(--green);  background:var(--green-soft); }
+.prop { border-left:5px solid var(--purple); background:var(--purple-soft); }
+.rem  { border-left:5px solid var(--orange); background:var(--orange-soft); }
+
+.tag{
+  display:inline-block; font-weight:700; font-size:.72rem;
+  letter-spacing:.06em; text-transform:uppercase; margin-bottom:.35em;
+  padding:.1em .65em; border-radius:.4rem; color:#fff;
+}
+.def  .tag{ background:var(--blue); }
+.ex   .tag{ background:var(--green); }
+.prop .tag{ background:var(--purple); }
+.rem  .tag{ background:var(--orange); }
+
+.grid2{ display:grid; grid-template-columns:1fr 1fr; gap: clamp(.7rem, 1.2vw, 1.1rem); }
+.grid3{ display:grid; grid-template-columns:repeat(3,1fr); gap: clamp(.7rem, 1.2vw, 1.1rem); }
+@media(max-width:820px){ .grid2, .grid3{ grid-template-columns:1fr; } h1{ font-size:2rem; } h2{ font-size:1.5rem; } }
+
+button{
+  font:inherit; cursor:pointer;
+  border:1px solid var(--blue); background:var(--card); color:var(--blue);
+  padding:.45rem .9rem; border-radius:.6rem;
+  transition:.15s; font-size:.92rem;
+}
+button:hover{ background:var(--blue); color:#fff; }
+button.primary{ background:var(--blue); color:#fff; }
+button.primary:hover{ filter:brightness(1.1); }
+button.on{ background:var(--blue); color:#fff; }
+
+.hidden{ display:none; }
+.proof{
+  margin-top:.5rem; padding:.6rem .9rem;
+  background:var(--card); border:1px dashed var(--purple); border-radius:.6rem;
+}
+
+nav.bottom{
+  position:fixed; bottom:0; left:0; right:0;
+  height: clamp(64px, 8vh, 96px);
+  display:flex; align-items:center; justify-content:center;
+  gap: clamp(.8rem, 2vw, 1.6rem);
+  padding: 0 clamp(1rem, 3vw, 2.5rem);
+  background:var(--card); border-top:1px solid var(--line); z-index:6;
+}
+#dots{
+  display:flex; gap:.35rem; flex-wrap:wrap;
+  justify-content:center; max-width:65vw;
+}
+#dots span{
+  width:.55rem; height:.55rem; border-radius:50%;
+  background:var(--line); cursor:pointer; transition:.2s;
+}
+#dots span.intro{ background:#c9d6ee; }
+#dots span.active{ background:var(--blue); transform:scale(1.5); }
+
+/* Chain of the statistical approach */
+.chain{ display:flex; flex-direction:column; gap:.4rem; align-items:center; margin:.6rem 0; }
+.step{
+  width:min(28rem, 100%);
+  padding:.7rem 1.1rem;
+  border:2px solid var(--blue); border-radius:.75rem;
+  background:var(--blue-soft); cursor:pointer; text-align:center;
+  transition:.2s;
+}
+.step.sel{ background:var(--blue); color:#fff; }
+.step small{ display:block; opacity:.85; font-size:.85em; }
+.arrow{ color:var(--blue); font-size:.85rem; font-style:italic; }
+.chain-info{ min-height:3rem; text-align:center; color:var(--muted); }
+
+/* Population grid */
+#pop{
+  display:grid; grid-template-columns:repeat(25,1fr);
+  gap:.3rem; max-width:min(760px, 92vw); margin:.6rem auto;
+}
+#pop i{ aspect-ratio:1; border-radius:50%; background:var(--line); opacity:.55; transition:.25s; }
+#pop i.s{ opacity:1; background:var(--muted); }
+#pop i.s.v{ background:var(--c1); }
+
+.stat{ display:flex; gap:.6rem; flex-wrap:wrap; justify-content:center; margin:.4rem 0; }
+.stat div{
+  background:var(--card); border:1px solid var(--line); border-radius:.6rem;
+  padding:.35rem .9rem; text-align:center;
+}
+.stat b{ display:block; font-size:1.35rem; }
+
+/* Tree */
+.tree{ display:flex; flex-direction:column; align-items:center; gap:.6rem; margin:.5rem 0; }
+.tree .row{ display:flex; gap:.75rem; justify-content:center; flex-wrap:wrap; }
+.node{
+  padding:.35rem .9rem; border:2px solid var(--blue);
+  border-radius:.6rem; background:var(--blue-soft); font-weight:600; cursor:pointer;
+  font-size:.95rem;
+}
+.node.leaf{ background:var(--card); }
+
+/* Quiz */
+.q-item{ font-size:1.3rem; font-weight:700; text-align:center; margin:.5rem 0; }
+.opts{ display:flex; gap:.6rem; justify-content:center; flex-wrap:wrap; }
+.fb{ min-height:3.4rem; text-align:center; margin-top:.6rem; }
+.ok{ color:var(--green); font-weight:700; }
+.bad{ color:var(--red); font-weight:700; }
+
+/* Tables */
+table{ border-collapse:collapse; width:100%; }
+th, td{ padding:.5rem .65rem; text-align:center; border-bottom:1px solid var(--line); }
+th{ color:var(--blue); font-size:.92rem; }
+td:first-child, th:first-child{ text-align:left; }
+tfoot td{ font-weight:700; border-top:2px solid var(--blue); border-bottom:none; }
+
+/* Stepper inputs */
+.stepper{ display:inline-flex; align-items:center; gap:.25rem; }
+.stepper button{ padding:0 .55rem; line-height:1.5; }
+.stepper input{
+  width:3.4rem; text-align:center; font:inherit;
+  border:1px solid var(--line); border-radius:.5rem; padding:.2rem;
+  background:var(--card); color:var(--ink);
+}
+
+.badge{
+  display:inline-block; padding:.15rem .7rem; border-radius:99px;
+  font-size:.85rem; font-weight:600;
+  background:var(--green-soft); color:var(--green);
+}
+.sw{ display:inline-block; width:.7rem; height:.7rem; border-radius:.2rem; margin-right:.4rem; }
+svg text{ fill:var(--ink); font-family:inherit; }
+.chartbox{ display:flex; gap:1.2rem; align-items:center; flex-wrap:wrap; justify-content:center; }
+.legend div{ margin:.2rem 0; font-size:.92rem; }
+.hint{ color:var(--muted); font-size:.9rem; }
+.sumlist li{ margin:.4rem 0; }
+
+/* Intro-specific */
+.tabs{ display:flex; gap:.5rem; flex-wrap:wrap; margin:.4rem 0; }
+.tabs button.on{ background:var(--green); border-color:var(--green); }
+.tabinfo{ min-height:4.2rem; }
+.hist{ display:flex; gap:.35rem; flex-wrap:wrap; justify-content:center; margin:.5rem 0; }
+.hist span{
+  background:var(--blue-soft); border:1px solid var(--blue);
+  border-radius:.5rem; padding:.1rem .6rem; font-weight:700; font-size:.85rem;
+}
+.timeline{ display:flex; gap:.5rem; flex-wrap:wrap; }
+.timeline button{ flex:1; min-width:10rem; text-align:left; }
+details.chap{
+  background:var(--card); border:1px solid var(--line);
+  border-left:5px solid var(--blue); border-radius:.75rem;
+  padding:.6rem 1rem; margin:.6rem 0;
+}
+details.chap summary{ cursor:pointer; font-weight:700; }
+details.chap p{ margin:.5em 0 0; color:var(--muted); }
+
+/* Grade calculator sliders */
+.sl{ display:grid; grid-template-columns:12rem 1fr 3.2rem; gap:.6rem; align-items:center; margin:.35rem 0; }
+.sl input{ width:100%; }
+.bigres{ font-size:2.4rem; font-weight:800; color:var(--blue); text-align:center; line-height:1.1; }
+@media(max-width:760px){ .sl{ grid-template-columns:1fr 1fr 3rem; } }
+
+/* Responsive charts */
+#pie{
+  width:min(400px, 42vh);
+  height:auto;
+  aspect-ratio:1;
+  display:block;
+  max-width:100%;
+}
+#bar{
+  width:100%;
+  max-width:min(780px, 100%);
+  height:auto;
+  display:block;
+  margin:0 auto;
+}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<header class="top"><span id="part">Probability and Statistics 1 · Course introduction</span><span id="counter"></span></header>
+
+<div id="deck">
+
+<!-- ===================== COURSE INTRODUCTION ===================== -->
+
+<!-- I1 TITLE -->
+<section class="slide" data-part="Course introduction">
+<div class="wrap" style="text-align:center;padding-top:8vh">
+  <div class="sub"> Computer science - L2</div>
+  <div class="sub">USDB 2026–2027</div>
+  <h1>Probability and Statistics 1</h1>
+  <p class="sub">Course introduction: what this semester is about</p>
+  <div class="card" style="display:inline-block;text-align:left;max-width:40rem">
+    <b>In this introduction:</b>
+    <ul>
+      <li>why a computer scientist needs statistics and probability;</li>
+      <li>what statistics is, and the plan of the course;</li>
+      <li>how the semester is organised and assessed.</li>
+    </ul>
+  </div>
+  <p class="hint">OUCHENE Abdelhak</p>
+
+  <p class="hint"> use ← → keys, the buttons below, or press <b>F</b> for fullscreen</p>
+</div>
+</section>
+
+<!-- I2 WHY -->
+<section class="slide" data-part="Course introduction">
+<div class="wrap">
+  <h2><span class="num">1</span>Why statistics and probability?</h2>
+  <p>We observe <b>a part</b> (sample, logs, A/B test) to say something about <b>a whole</b> (population, future traffic, production system), and the observations are affected by variability no engineering can remove.</p>
+  <div class="grid2">
+    <div class="card def"><span class="tag">Descriptive statistics</span><br>Condenses observations into a table, a graph and a few numbers.</div>
+    <div class="card def"><span class="tag">Probability</span><br>Models the variability itself: possible outcomes, events, degree of belief.</div>
+  </div>
+  <p class="hint">Two halves of the same method: descriptive statistics without probability cannot generalise; probability without descriptive statistics never meets data.</p>
+  <div class="card">
+    <b>Four situations — click one</b>
+    <div class="tabs" id="whyTabs">
+      <button data-k="0">Model evaluation</button>
+      <button data-k="1">Latency</button>
+      <button data-k="2">Security</button>
+      <button data-k="3">A/B testing</button>
+    </div>
+    <div class="tabinfo" id="whyInfo">Select a situation to see which tool answers which question.</div>
+  </div>
+  <div class="card ex">
+    <span class="tag">Try it</span> A model scores <b>0.87</b> on a test set of 500 examples. Suppose its true accuracy is 0.87. How much can the measured value move on <i>another</i> sample of 500?
+    <div style="text-align:center;margin:.5rem 0"><button class="primary" id="accBtn">Draw a new test set of 500</button> <button id="accReset">Clear</button></div>
+    <div class="hist" id="accHist"></div>
+    <div class="chain-info" id="accInfo">Descriptive statistics summarises the 500 results; probability tells us how much the number moves.</div>
+  </div>
+</div>
+</section>
+
+<!-- I3 WHAT IS STATISTICS -->
+<section class="slide" data-part="Course introduction">
+<div class="wrap">
+  <h2><span class="num">2</span>What statistics is</h2>
+  <div class="card def"><span class="tag">Definition</span><br><b>Statistics</b> is the set of methods used to analyse and process sets of observations (<i>data</i>) in order to facilitate decision-making under uncertainty. It rests on mathematics and makes extensive use of computer tools.</div>
+  <div class="card ex"><span class="tag">Example</span><br>Average latency of a service, histogram of dataset sizes, testing whether two versions of an interface differ.</div>
+  <div class="card rem"><span class="tag">Remark: statistics vs a statistic</span><br><i>Statistics</i> is the science. A <i>statistic</i> is a number computed from a sample: a mean, a percentage, a correlation coefficient.</div>
+  <div class="card">
+    <b>Three phases of the discipline</b> — click
+    <div class="timeline" style="margin-top:.5rem">
+      <button class="tl" data-k="0">Antiquity → 19th c.</button>
+      <button class="tl" data-k="1">19th c. → 1960s</button>
+      <button class="tl" data-k="2">Since the 1960s</button>
+    </div>
+    <div class="tabinfo" id="tlInfo" style="margin-top:.5rem"></div>
+  </div>
+</div>
+</section>
+
+<!-- I4 CHAIN -->
+<section class="slide" data-part="Course introduction">
+<div class="wrap">
+  <h2><span class="num">3</span>From data to decision: the statistical approach</h2>
+  <p>Whatever the size of the data, a study follows the same chain. <b>Each stage trades information for legibility.</b> Click a stage.</p>
+  <div class="chain" id="chain">
+    <div class="step" data-i="0"><b>Data table</b><small>raw observations, one line per individual</small></div>
+    <div class="arrow">↓ synthesise</div>
+    <div class="step" data-i="1"><b>Statistical table</b><small>frequencies, classes, cumulative counts</small></div>
+    <div class="arrow">↓ visualise</div>
+    <div class="step" data-i="2"><b>Graphical representations</b><small>bar chart, histogram, polygon, boxplot</small></div>
+    <div class="arrow">↓ summarise</div>
+    <div class="step" data-i="3"><b>Numerical summaries</b><small>position and dispersion parameters</small></div>
+  </div>
+  <div class="chain-info" id="chainInfo">Chapter 1 covers the first three stages for a single character. Chapter 2 covers the last.</div>
+  <div class="card rem"><span class="tag">Rule of the course</span><br>A summary is always relative to a question: the mean latency and the 99th percentile are both legitimate, and they answer different questions.</div>
+</div>
+</section>
+
+<!-- I5 TWO PARTS -->
+<section class="slide" data-part="Course introduction">
+<div class="wrap">
+  <h2><span class="num">4</span>The two parts of the course</h2>
+  <div class="grid2">
+    <div class="card def"><span class="tag">Descriptive statistics</span><br>Organises, summarises and describes a set of observations <i>actually collected</i>, without extrapolating beyond them.
+      <p class="hint">Frequency table of editors, histogram of dataset sizes, mean and standard deviation of latency.</p></div>
+    <div class="card def"><span class="tag">Probability</span><br>Models a random experiment: the set of outcomes, the events, and a measure of the likelihood of each. The foundation of every inference from sample to population.
+      <p class="hint">P(request served in &lt; 50 ms), P(false positive | alert).</p></div>
+  </div>
+  <div class="card">
+    <table>
+      <thead><tr><th>Part</th><th>Content</th><th>Chapters</th></tr></thead>
+      <tbody>
+        <tr><td><b>I. Descriptive statistics</b></td><td style="text-align:left">Vocabulary; one-dimensional series: tables, graphs, position and dispersion parameters</td><td>Ch. 1, Ch. 2</td></tr>
+        <tr><td><b>II. Probability calculus</b></td><td style="text-align:left">Events, combinatorics, probability spaces, conditioning, Bayes, independence</td><td>Ch. 3</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</section>
+
+<!-- I6 ORGANISATION -->
+<section class="slide" data-part="Course introduction">
+<div class="wrap">
+  <h2><span class="num">5</span>Organisation of the course</h2>
+  <p>Three chapters, each developed over several sessions; tutorial exercises follow the progression of the chapters. Click a chapter.</p>
+  <details class="chap" open><summary>Ch. 1 — Basic statistical notions and vocabulary</summary>
+    <p>Population, individual, sample; survey, census, poll; character and modalities; qualitative (nominal, ordinal) and quantitative (discrete, continuous) characters; frequency tables; bar chart, pie chart; classes, histogram, polygon, cumulative curves.</p></details>
+  <details class="chap"><summary>Ch. 2 — Numerical representation of data</summary>
+    <p>Position: mode, arithmetic / weighted / geometric / harmonic / quadratic means, median, quartiles, IQR. Dispersion: range, mean absolute deviation, variance, standard deviation, coefficient of variation, boxplot and outliers.</p></details>
+  <details class="chap"><summary>Ch. 3 — Probability calculus</summary>
+    <p>Combinatorics; random experiments, events, algebra and σ-algebra, probability spaces and axioms; conditional probability, independence; total probability, Bayes' formula.</p></details>
+  <div class="card rem"><span class="tag">Prerequisites</span><br>Only elementary mathematics: sets, algebra, summation notation \(\sum\), factorials, first rules of counting. No measure theory.</div>
+</div>
+</section>
+
+<!-- I7 ASSESSMENT -->
+<section class="slide" data-part="Course introduction">
+<div class="wrap">
+  <h2><span class="num">6</span>Assessment</h2>
+  <div class="grid2">
+    <div class="card def"><span class="tag">Continuous assessment · 1/3</span><br>Presence: 5 pts · Tutorial participation: 5 pts · Unannounced tutorial tests: 10 pts · Total 20 pts.</div>
+    <div class="card def"><span class="tag">Final examination · 2/3</span><br>Written exam covering the three chapters.</div>
+  </div>
+  <div class="card">
+    <b>Grade calculator</b>
+    <div class="sl"><label>Presence (/5)</label><input type="range" id="gP" min="0" max="5" step="0.5" value="5"><b id="gPv">5</b></div>
+    <div class="sl"><label>Participation (/5)</label><input type="range" id="gQ" min="0" max="5" step="0.5" value="4"><b id="gQv">4</b></div>
+    <div class="sl"><label>Tutorial tests (/10)</label><input type="range" id="gT" min="0" max="10" step="0.5" value="7"><b id="gTv">7</b></div>
+    <div class="sl"><label>Final exam (/20)</label><input type="range" id="gE" min="0" max="20" step="0.5" value="12"><b id="gEv">12</b></div>
+    <div class="grid2" style="margin-top:.5rem">
+      <div><div class="hint" style="text-align:center">Continuous assessment (/20)</div><div class="bigres" id="gCC"></div></div>
+      <div><div class="hint" style="text-align:center">Final grade = ⅓·CA + ⅔·Exam</div><div class="bigres" id="gF"></div></div>
+    </div>
+    <div class="chain-info" id="gNeed"></div>
+  </div>
+  <div class="card rem"><span class="tag">Remark</span><br>The tests verify, session after session, that definitions and procedures are acquired: Chapters 2 and 3 rest entirely on the vocabulary and tables of Chapter 1.</div>
+</div>
+</section>
+
+<!-- I8 FURTHER READING -->
+<section class="slide" data-part="Course introduction">
+<div class="wrap">
+  <h2><span class="num">7</span>Further reading</h2>
+  <p class="hint">Not required for the exams, but the standard sources behind these notes.</p>
+  <div class="card">
+    <ol class="sumlist">
+      <li>Freedman, Pisani, Purves — <i>Statistics</i> (conceptual, few prerequisites).</li>
+      <li>Montgomery, Runger — <i>Applied Statistics and Probability for Engineers</i> (covers Ch. 1–3).</li>
+      <li>Devore — <i>Probability and Statistics for Engineering and the Sciences</i> (many exercises).</li>
+      <li>Saporta — <i>Probabilités, analyse des données et statistique</i> (French reference).</li>
+      <li>Deisenroth, Faisal, Ong — <i>Mathematics for Machine Learning</i> (Ch. 6 and 8).</li>
+      <li>Feller — <i>An Introduction to Probability Theory and Its Applications</i>, Vol. 1.</li>
+    </ol>
+  </div>
+  <p class="sub" style="text-align:center">Now: Chapter 1, Session 1 →</p>
+</div>
+</section>
+
+<!-- ===================== CHAPTER 1 ===================== -->
+
+<!-- C1 TITLE -->
+<section class="slide" data-part="Chapter 1 · Session 1">
+<div class="wrap" style="text-align:center;padding-top:7vh">
+  <div class="sub">Probability and Statistics 1 · 2026–2027</div>
+  <h1>Chapter 1<br>Basic statistical notions and vocabulary</h1>
+  <p class="sub">Session 1 — Population, characters, and the frequency distribution of a qualitative character</p>
+  <div class="card" style="display:inline-block;text-align:left;max-width:40rem">
+    <b>Today you will be able to:</b>
+    <ul>
+      <li>distinguish population, individual, sample, census and poll;</li>
+      <li>classify any character (nominal, ordinal, discrete, continuous);</li>
+      <li>build a frequency table and draw a pie chart and a bar chart.</li>
+    </ul>
+  </div>
+  <p class="hint">The vocabulary is not decorative: every later error of interpretation traces back to one of these distinctions being ignored.</p>
+</div>
+</section>
+
+<!-- C2 POPULATION DEFS -->
+<section class="slide" data-part="Chapter 1 · Session 1">
+<div class="wrap">
+  <h2><span class="num">1</span>Population, individual, sample</h2>
+  <div class="grid3">
+    <div class="card def"><span class="tag">Definition</span><br><b>Population</b> \(\Omega\): the complete set of units concerned by the study.</div>
+    <div class="card def"><span class="tag">Definition</span><br><b>Individual</b> \(\omega\in\Omega\): one member of the population (whatever the study is about).</div>
+    <div class="card def"><span class="tag">Definition</span><br><b>Sample</b>: the subset of \(\Omega\) on which observations are actually made, of size \(n\).</div>
+  </div>
+  <div class="card ex"><span class="tag">Example</span><br>
+    Population: all \(1200\) students of an AI school. Sample: \(80\) of them drawn at random, \(n=80\).
+    In a security study, an individual is a <i>connection attempt</i>, not a person.</div>
+  <div class="card rem"><span class="tag">Remark</span><br>A population need not be finite, nor physical: the set of requests a server <i>could</i> receive is a legitimate population. In Chapter 3, \(\Omega\) will be the set of outcomes of a random experiment.</div>
+</div>
+</section>
+
+<!-- C3 SURVEY CENSUS POLL -->
+<section class="slide" data-part="Chapter 1 · Session 1">
+<div class="wrap">
+  <h2><span class="num">2</span>Survey, census, poll</h2>
+  <div class="grid3">
+    <div class="card def"><span class="tag">Survey</span><br>Observing the individuals of a sample to collect data.</div>
+    <div class="card def"><span class="tag">Census</span><br>Survey where sample = population (exhaustive).</div>
+    <div class="card def"><span class="tag">Poll</span><br>Survey where the sample is a strict subset.</div>
+  </div>
+  <div class="card">
+    <b>Try it.</b> The population has 200 individuals; <span style="color:var(--c1);font-weight:700">blue</span> = uses VS Code (true share: 47.5%). Draw a poll and compare.
+    <div style="margin:.5rem 0;display:flex;gap:.6rem;align-items:center;flex-wrap:wrap;justify-content:center">
+      <label>Sample size <b id="nlab">20</b>
+        <input type="range" id="nsl" min="5" max="200" value="20" style="vertical-align:middle"></label>
+      <button class="primary" id="poll">Draw a poll</button>
+      <button id="census">Census (everyone)</button>
+    </div>
+    <div id="pop"></div>
+    <div class="stat">
+      <div><span class="hint">Type</span><b id="stType">—</b></div>
+      <div><span class="hint">Sample estimate</span><b id="stEst">—</b></div>
+      <div><span class="hint">True share</span><b>47.5%</b></div>
+      <div><span class="hint">Sampling error</span><b id="stErr">—</b></div>
+    </div>
+    <p class="hint" style="text-align:center">A census is exact but costly; a poll is cheaper but introduces a sampling error. Redraw several times: the error shrinks as \(n\) grows.</p>
+  </div>
+</div>
+</section>
+
+<!-- C4 CHARACTER -->
+<section class="slide" data-part="Chapter 1 · Session 1">
+<div class="wrap">
+  <h2><span class="num">3</span>The statistical character</h2>
+  <div class="grid2">
+    <div class="card def"><span class="tag">Definition</span><br>A <b>character</b> is a characteristic defined on the population and observed on the sample. Its values are its <b>modalities</b>.</div>
+    <div class="card ex"><span class="tag">Example</span><br>Character “main code editor”: modalities VS Code, Jupyter, Vim/Neovim, emacs.</div>
+  </div>
+  <div class="card" style="text-align:center">
+    <b>Typology of characters</b> (click a node)
+    <div class="tree" id="tree">
+      <div class="row"><div class="node" style="cursor:default">Character</div></div>
+      <div class="row">
+        <div class="node" data-k="qual">Qualitative</div>
+        <div class="node" data-k="quant">Quantitative</div>
+      </div>
+      <div class="row">
+        <div class="node leaf" data-k="nom">Nominal</div>
+        <div class="node leaf" data-k="ord">Ordinal</div>
+        <div class="node leaf" data-k="dis">Discrete</div>
+        <div class="node leaf" data-k="con">Continuous</div>
+      </div>
+    </div>
+    <div class="chain-info" id="treeInfo">Qualitative: modalities are not measurable. Quantitative: modalities are numbers.</div>
+  </div>
+  <div class="card rem"><span class="tag">Remark</span><br>Digits do not make a character quantitative. A student number, an HTTP status code or a hex colour is a <i>label</i>: averaging them is meaningless.</div>
+</div>
+</section>
+
+<!-- C5 QUIZ -->
+<section class="slide" data-part="Chapter 1 · Session 1">
+<div class="wrap">
+  <h2><span class="num">4</span>Quick check: classify the character</h2>
+  <div class="card">
+    <div class="hint" style="text-align:center">Question <span id="qn">1</span> / <span id="qt">6</span> · Score <span id="qs">0</span></div>
+    <div class="q-item" id="qitem"></div>
+    <div class="opts" id="qopts">
+      <button data-a="nom">Nominal</button>
+      <button data-a="ord">Ordinal</button>
+      <button data-a="dis">Discrete</button>
+      <button data-a="con">Continuous</button>
+    </div>
+    <div class="fb" id="qfb"></div>
+    <div style="text-align:center"><button id="qnext" class="hidden primary">Next →</button></div>
+  </div>
+</div>
+</section>
+
+<!-- C6 FREQUENCIES -->
+<section class="slide" data-part="Chapter 1 · Session 1">
+<div class="wrap">
+  <h2><span class="num">5</span>Counting: the three fundamental quantities</h2>
+  <p>A qualitative character has \(k\) modalities \(x_1,\dots,x_k\) forming a <i>complete system</i>: each individual belongs to exactly one. Sample size: \(n\).</p>
+  <div class="grid3">
+    <div class="card def"><span class="tag">Absolute frequency</span><br>\(n_i\): number of individuals with modality \(x_i\).</div>
+    <div class="card def"><span class="tag">Relative frequency</span><br>\[f_i=\frac{n_i}{n}\]</div>
+    <div class="card def"><span class="tag">Percentage</span><br>\[p_i=100\,f_i\]</div>
+  </div>
+  <div class="card prop"><span class="tag">Proposition</span>
+    \[\sum_{i=1}^{k}n_i=n,\qquad 0\le f_i\le 1,\qquad \sum_{i=1}^{k}f_i=1,\qquad \sum_{i=1}^{k}p_i=100\]
+    <button id="pfBtn">Show why</button>
+    <div class="proof hidden" id="pf">Each individual belongs to exactly one modality (the system is complete), so the counts add up to the sample size: \(\sum n_i=n\). Dividing by \(n\) gives \(\sum f_i=1\), and multiplying by 100 gives \(\sum p_i=100\).</div>
+  </div>
+  <div class="card ex"><span class="tag">Example</span> \(38\) of \(80\) students answered “VS Code”: \(n_{\mathrm{VSC}}=38\), \(f=38/80=0.475\), \(p=47.5\,\%\).</div>
+  <div class="card rem"><span class="tag">Rounding</span> If frequencies are rounded, adjust the <i>largest</i> one so the total is exactly 1, rather than rounding each independently.</div>
+</div>
+</section>
+
+<!-- C7 TABLE -->
+<section class="slide" data-part="Chapter 1 · Session 1">
+<div class="wrap">
+  <h2><span class="num">6</span>The frequency table — build it yourself</h2>
+  <div class="card def"><span class="tag">Definition</span> One row per modality with \(n_i\), \(f_i\), \(p_i\); last row = totals. Steps: list modalities (add “Other” if needed) → count → divide by \(n\) → multiply by 100 and check totals.</div>
+  <div class="card">
+    <table>
+      <thead><tr><th>Main editor</th><th>n<sub>i</sub> (edit)</th><th>f<sub>i</sub> = n<sub>i</sub>/n</th><th>p<sub>i</sub> = 100 f<sub>i</sub></th><th>θ<sub>i</sub> (pie angle)</th></tr></thead>
+      <tbody id="tbody"></tbody>
+      <tfoot><tr><td>Total</td><td id="tN">80</td><td id="tF">1.0000</td><td id="tP">100.00</td><td id="tT">360°</td></tr></tfoot>
+    </table>
+    <div style="display:flex;justify-content:space-between;margin-top:.6rem;flex-wrap:wrap;gap:.5rem">
+      <span id="chk" class="badge">✓ Σ f<sub>i</sub> = 1 and Σ p<sub>i</sub> = 100</span>
+      <button id="reset">Reset to the survey (38, 18, 14, 10)</button>
+    </div>
+    <p class="hint">Change any count: \(n\), the frequencies and the angles update, and the charts on the next slides follow.</p>
+  </div>
+</div>
+</section>
+
+<!-- C8 PIE -->
+<section class="slide" data-part="Chapter 1 · Session 1">
+<div class="wrap">
+  <h2><span class="num">7</span>Pie chart</h2>
+  <div class="card def"><span class="tag">Definition</span> A disk divided into sectors whose angles are proportional to the frequencies:
+    \[\theta_i=\frac{n_i}{n}\times 360^\circ=\frac{p_i}{100}\times 360^\circ\]
+  </div>
+  <div class="card">
+    <div class="chartbox">
+      <svg id="pie" viewBox="-110 -110 220 220"></svg>
+      <div>
+        <div class="legend" id="pieLegend"></div>
+        <div class="card ex" style="margin-top:.6rem"><span class="tag">Hover a sector</span><div id="pieInfo">Sum of angles: 360°</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="card rem"><span class="tag">Remark</span> Meaningful only if modalities partition a whole (exhaustive, mutually exclusive). Unreadable beyond ~6 sectors and poor for comparing close frequencies: a <i>communication</i> tool, not an analysis tool.</div>
+</div>
+</section>
+
+<!-- C9 BAR -->
+<section class="slide" data-part="Chapter 1 · Session 1">
+<div class="wrap">
+  <h2><span class="num">8</span>Bar chart</h2>
+  <div class="card def"><span class="tag">Definition</span> Each modality is a vertical rectangle of height proportional to \(n_i\) (or \(f_i\), \(p_i\)); the vertical axis starts at zero.</div>
+  <div class="card">
+    <div style="display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center;margin-bottom:.4rem">
+      <button id="truncBtn">Truncate the axis</button>
+      <button id="sortBtn">Sort by frequency (Pareto)</button>
+    </div>
+    <svg id="bar" viewBox="0 0 560 300"></svg>
+    <div id="barMsg" class="chain-info"></div>
+  </div>
+  <div class="card rem"><span class="tag">Remark</span> A truncated axis exaggerates differences — a classic manipulation. By contrast, the <i>order</i> of the modalities is free; sorting by decreasing frequency gives a Pareto chart.</div>
+</div>
+</section>
+
+<!-- C10 SUMMARY -->
+<section class="slide" data-part="Chapter 1 · Session 1">
+<div class="wrap">
+  <h2><span class="num">✓</span>Summary of Session 1</h2>
+  <div class="card">
+    <ul class="sumlist">
+      <li>A study concerns a <b>population</b>, observes a <b>sample</b> through a <b>survey</b>: a <b>census</b> if exhaustive, a <b>poll</b> otherwise.</li>
+      <li>A <b>character</b> is <i>qualitative</i> (nominal / ordinal) or <i>quantitative</i> (discrete / continuous); the type determines the table, graphs and admissible parameters.</li>
+      <li>\(n_i,\; f_i=\dfrac{n_i}{n},\; p_i=100f_i\) with \(\sum n_i=n,\ \sum f_i=1,\ \sum p_i=100\).</li>
+      <li><b>Pie chart</b>: \(\theta_i=\dfrac{n_i}{n}\times360^\circ\). <b>Bar chart</b>: heights \(\propto n_i\), axis from zero.</li>
+    </ul>
+  </div>
+  <div class="card rem"><span class="tag">Common mistakes</span>
+    <ul class="sumlist">
+      <li>Forgetting the residual modality “Other” (frequencies no longer sum to 1).</li>
+      <li>Truncating the axis of a bar chart.</li>
+      <li>Using a pie chart for non-exhaustive categories.</li>
+      <li>Treating codes (student numbers, HTTP codes) as numbers.</li>
+    </ul>
+  </div>
+  <p class="sub" style="text-align:center">End of Session 1. Next session: quantitative characters — classes, histogram, polygon, cumulative curve.</p>
+</div>
+</section>
+
+</div>
+
+<nav class="bottom">
+  <button id="prev">← Previous</button>
+  <div id="dots"></div>
+  <button id="next" class="primary">Next →</button>
+</nav>
+
+<script>
+/* ---------- Slide engine ---------- */
+const slides=[...document.querySelectorAll('.slide')];
+let cur=0;
+const dots=document.getElementById('dots');
+slides.forEach((s,i)=>{const d=document.createElement('span');
+  if(s.dataset.part==='Course introduction')d.classList.add('intro');
+  d.onclick=()=>go(i);dots.appendChild(d)});
+function go(i){
+  cur=Math.max(0,Math.min(slides.length-1,i));
+  slides.forEach((s,k)=>s.classList.toggle('active',k===cur));
+  [...dots.children].forEach((d,k)=>d.classList.toggle('active',k===cur));
+  document.getElementById('progress').style.width=((cur+1)/slides.length*100)+'%';
+  document.getElementById('counter').textContent=(cur+1)+' / '+slides.length;
+  document.getElementById('part').textContent='Probability and Statistics 1 · '+slides[cur].dataset.part;
+  slides[cur].scrollTop=0;
+  document.getElementById('prev').style.visibility=cur?'visible':'hidden';
+  document.getElementById('next').style.visibility=cur<slides.length-1?'visible':'hidden';
+}
+document.getElementById('prev').onclick=()=>go(cur-1);
+document.getElementById('next').onclick=()=>go(cur+1);
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='INPUT'&&e.target.type!=='range')return;
+  if(e.key==='ArrowRight'||e.key==='PageDown')go(cur+1);
+  if(e.key==='ArrowLeft'||e.key==='PageUp')go(cur-1);
+  if(e.key==='f'||e.key==='F'){
+    if(!document.fullscreenElement)document.documentElement.requestFullscreen();
+    else document.exitFullscreen();
+  }
+});
+
+/* ---------- KaTeX ---------- */
+function typeset(){
+  if(window.renderMathInElement){
+    renderMathInElement(document.body,{delimiters:[
+      {left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false}],throwOnError:false});
+  }
+}
+window.addEventListener('load',()=>{typeset();go(0)});
+go(0);
+
+/* ======================= INTRODUCTION ======================= */
+
+/* Why: situations */
+const whyTxt=[
+ '<b>Model evaluation.</b> Is 0.87 the accuracy of the model, or of the model <i>on this sample</i>? Descriptive statistics summarises the 500 results; probability tells how much the number may move on another sample.',
+ '<b>Latency.</b> A mean of 42 ms is useless to the user who experiences the slowest 1% of requests. Dispersion parameters and the boxplot (Chapter 2) make the report usable.',
+ '<b>Security.</b> Classifying 200 incidents by type and finding the dominant vector is descriptive. Deciding whether the increase since last year is significant is probabilistic.',
+ '<b>A/B testing.</b> Describing observed click-through rates is descriptive; concluding that one algorithm is better for all users needs conditional probability and independence (Chapter 3).'];
+document.querySelectorAll('#whyTabs button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('#whyTabs button').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on');
+  document.getElementById('whyInfo').innerHTML=whyTxt[+b.dataset.k];
+});
+
+/* Accuracy simulator */
+let accs=[];
+function drawAcc(){
+  let k=0;for(let i=0;i<500;i++)if(Math.random()<0.87)k++;
+  accs.push(k/500);if(accs.length>12)accs.shift();
+  document.getElementById('accHist').innerHTML=accs.map(a=>'<span>'+a.toFixed(3)+'</span>').join('');
+  const mn=Math.min(...accs),mx=Math.max(...accs);
+  document.getElementById('accInfo').innerHTML='Observed range over '+accs.length+' test set(s): <b>'+mn.toFixed(3)+'</b> to <b>'+mx.toFixed(3)+'</b>. Same model, same true accuracy: the measured number moves.';
+}
+document.getElementById('accBtn').onclick=drawAcc;
+document.getElementById('accReset').onclick=()=>{accs=[];document.getElementById('accHist').innerHTML='';document.getElementById('accInfo').textContent='Descriptive statistics summarises the 500 results; probability tells us how much the number moves.'};
+
+/* Timeline */
+const tlTxt=[
+ '<b>Enumerations.</b> From antiquity to the end of the 19th century: counting motivated by taxation, demography and insurance.',
+ '<b>Mathematical statistics.</b> Built as a science by Karl Pearson, William Gosset (Student), Ronald Fisher and Jerzy Neyman: estimation, hypothesis testing, experimental design.',
+ '<b>Computational era.</b> Computing and graphical tools: computations once reserved for small samples now run on millions of observations; visualisation is a method of analysis in its own right.'];
+document.querySelectorAll('.tl').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.tl').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on');
+  document.getElementById('tlInfo').innerHTML=tlTxt[+b.dataset.k];
+});
+
+/* Chain */
+const chainTxt=[
+ 'Exact but unreadable: one line per individual.',
+ 'Readable, but the identity of the individuals is lost.',
+ 'Immediate, but approximate.',
+ 'A handful of numbers to compare and transmit — describing the sample only through the aspects they capture.'];
+document.querySelectorAll('.step').forEach(s=>s.onclick=()=>{
+  document.querySelectorAll('.step').forEach(x=>x.classList.remove('sel'));
+  s.classList.add('sel');
+  document.getElementById('chainInfo').textContent=chainTxt[+s.dataset.i];
+});
+
+/* Grade calculator */
+function grade(){
+  const g=id=>+document.getElementById(id).value;
+  ['gP','gQ','gT','gE'].forEach(id=>document.getElementById(id+'v').textContent=g(id));
+  const cc=g('gP')+g('gQ')+g('gT'), ex=g('gE');
+  const fin=cc/3+2*ex/3;
+  document.getElementById('gCC').textContent=cc.toFixed(1);
+  document.getElementById('gF').textContent=fin.toFixed(2);
+  const need=(10-cc/3)*3/2;
+  const n=document.getElementById('gNeed');
+  if(need<=0)n.innerHTML='<span class="ok">With this continuous assessment, you already reach 10/20 even with 0 in the exam.</span>';
+  else if(need>20)n.innerHTML='<span class="bad">10/20 is out of reach with this continuous assessment.</span>';
+  else n.innerHTML='To reach 10/20 you need at least <b>'+need.toFixed(2)+'/20</b> in the final exam.';
+}
+['gP','gQ','gT','gE'].forEach(id=>document.getElementById(id).oninput=grade);
+grade();
+
+/* ======================= CHAPTER 1 ======================= */
+
+/* Population / poll */
+const N=200, popEl=document.getElementById('pop');
+const vsc=new Set(); while(vsc.size<95) vsc.add(Math.floor(Math.random()*N));
+for(let i=0;i<N;i++){const d=document.createElement('i');popEl.appendChild(d)}
+const nsl=document.getElementById('nsl');
+nsl.oninput=()=>document.getElementById('nlab').textContent=nsl.value;
+function draw(n,label){
+  const idx=[...Array(N).keys()];
+  for(let i=N-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[idx[i],idx[j]]=[idx[j],idx[i]]}
+  const pick=new Set(idx.slice(0,n));
+  let v=0;
+  [...popEl.children].forEach((d,i)=>{
+    const s=pick.has(i), isV=vsc.has(i);
+    d.className=s?('s'+(isV?' v':'')):'';
+    if(s&&isV)v++;
+  });
+  const est=v/n*100;
+  document.getElementById('stType').textContent=label;
+  document.getElementById('stEst').textContent=est.toFixed(1)+'%';
+  document.getElementById('stErr').textContent=(Math.abs(est-47.5)).toFixed(1)+' pts';
+}
+document.getElementById('poll').onclick=()=>{const n=+nsl.value;draw(n,n===N?'Census':'Poll (n='+n+')')};
+document.getElementById('census').onclick=()=>draw(N,'Census');
+draw(20,'Poll (n=20)');
+
+/* Tree */
+const treeTxt={
+ qual:'Qualitative: modalities are not measurable (e.g. editor, severity).',
+ quant:'Quantitative: modalities are numbers and can be measured.',
+ nom:'Nominal: no natural order (editor, cloud provider, attack type).',
+ ord:'Ordinal: ordered, but differences have no numerical meaning (severity low→critical, 1–5 stars).',
+ dis:'Discrete: isolated values, generally integers (GPUs per node, commits per day).',
+ con:'Continuous: any value in an interval (latency in ms, dataset size in GB).'};
+document.querySelectorAll('#tree .node[data-k]').forEach(n=>n.onclick=()=>{
+  document.getElementById('treeInfo').textContent=treeTxt[n.dataset.k];
+});
+
+/* Quiz */
+const quiz=[
+ {t:'Main code editor of a student',a:'nom',e:'No modality is “greater” than another.'},
+ {t:'Severity of a vulnerability (low, medium, high, critical)',a:'ord',e:'Ordered, but gaps between levels are not numerical.'},
+ {t:'Number of GPUs in a cluster node',a:'dis',e:'Isolated integer values.'},
+ {t:'Inference latency of a model (ms)',a:'con',e:'Any value in an interval.'},
+ {t:'HTTP status code (200, 404, 500…)',a:'nom',e:'Digits, but only labels: averaging them is meaningless.'},
+ {t:'User satisfaction, 1 to 5 stars',a:'ord',e:'Ordered modalities; the step between stars has no numerical meaning.'}];
+let qi=0,qs=0,answered=false;
+const names={nom:'Nominal',ord:'Ordinal',dis:'Discrete',con:'Continuous'};
+function showQ(){
+  answered=false;
+  document.getElementById('qn').textContent=qi+1;
+  document.getElementById('qt').textContent=quiz.length;
+  document.getElementById('qs').textContent=qs;
+  document.getElementById('qitem').textContent=quiz[qi].t;
+  document.getElementById('qfb').innerHTML='';
+  document.getElementById('qnext').classList.add('hidden');
+}
+document.querySelectorAll('#qopts button').forEach(b=>b.onclick=()=>{
+  if(answered)return; answered=true;
+  const q=quiz[qi], right=b.dataset.a===q.a;
+  if(right)qs++;
+  document.getElementById('qs').textContent=qs;
+  document.getElementById('qfb').innerHTML=(right?'<span class="ok">✓ Correct.</span> ':'<span class="bad">✗ It is '+names[q.a].toLowerCase()+'.</span> ')+q.e;
+  const nb=document.getElementById('qnext');
+  nb.classList.remove('hidden');
+  nb.textContent=qi<quiz.length-1?'Next →':'Restart ↺';
+});
+document.getElementById('qnext').onclick=()=>{
+  if(qi<quiz.length-1)qi++; else {qi=0;qs=0}
+  showQ();
+};
+showQ();
+
+/* Proof toggle */
+document.getElementById('pfBtn').onclick=function(){
+  const p=document.getElementById('pf');p.classList.toggle('hidden');
+  this.textContent=p.classList.contains('hidden')?'Show why':'Hide';
+};
+
+/* Shared data */
+const mods=['VS Code','Jupyter Notebook','Vim/Neovim','emacs'];
+const colVars=['--c1','--c2','--c3','--c4'];
+const colOf=i=>getComputedStyle(document.documentElement).getPropertyValue(colVars[i]).trim();
+const base=[38,18,14,10];
+let counts=base.slice();
+const sum=()=>counts.reduce((a,b)=>a+b,0);
+
+function renderTable(){
+  const n=sum(), tb=document.getElementById('tbody');
+  tb.innerHTML='';
+  counts.forEach((c,i)=>{
+    const f=n?c/n:0;
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td><span class="sw" style="background:var(${colVars[i]})"></span>${mods[i]}</td>
+      <td><span class="stepper"><button data-i="${i}" data-d="-1">−</button><input type="number" min="0" value="${c}" data-i="${i}"><button data-i="${i}" data-d="1">+</button></span></td>
+      <td>${f.toFixed(4)}</td><td>${(f*100).toFixed(2)}</td><td>${(f*360).toFixed(1)}°</td>`;
+    tb.appendChild(tr);
+  });
+  tb.querySelectorAll('button').forEach(b=>b.onclick=()=>{
+    const i=+b.dataset.i; counts[i]=Math.max(0,counts[i]+ +b.dataset.d); refresh();
+  });
+  tb.querySelectorAll('input').forEach(inp=>inp.onchange=()=>{
+    counts[+inp.dataset.i]=Math.max(0,Math.floor(+inp.value||0)); refresh();
+  });
+  document.getElementById('tN').textContent=n;
+  const sf=counts.reduce((a,c)=>a+(n?c/n:0),0);
+  document.getElementById('tF').textContent=(n?sf:0).toFixed(4);
+  document.getElementById('tP').textContent=(n?sf*100:0).toFixed(2);
+  document.getElementById('tT').textContent=(n?sf*360:0).toFixed(0)+'°';
+  document.getElementById('chk').innerHTML=n?'✓ Σ f<sub>i</sub> = 1 and Σ p<sub>i</sub> = 100':'Add some observations (n = 0)';
+}
+document.getElementById('reset').onclick=()=>{counts=base.slice();refresh()};
+
+function renderPie(){
+  const n=sum(), svg=document.getElementById('pie'), leg=document.getElementById('pieLegend');
+  svg.innerHTML='';leg.innerHTML='';
+  let a0=-Math.PI/2;
+  counts.forEach((c,i)=>{
+    const th=n?c/n*360:0, a1=a0+th*Math.PI/180;
+    const r=100,x0=r*Math.cos(a0),y0=r*Math.sin(a0),x1=r*Math.cos(a1),y1=r*Math.sin(a1);
+    let el;
+    if(th>=359.999){el=document.createElementNS('http://www.w3.org/2000/svg','circle');el.setAttribute('r',r)}
+    else if(th>0){el=document.createElementNS('http://www.w3.org/2000/svg','path');
+      el.setAttribute('d',`M0 0 L${x0} ${y0} A${r} ${r} 0 ${th>180?1:0} 1 ${x1} ${y1} Z`)}
+    if(el){
+      el.setAttribute('fill',colOf(i));
+      el.setAttribute('stroke','var(--card)');el.setAttribute('stroke-width','2');
+      el.style.cursor='pointer';
+      el.onmouseover=()=>{document.getElementById('pieInfo').innerHTML=`<b>${mods[i]}</b>: θ = ${c}/${n} × 360° = <b>${th.toFixed(1)}°</b>`;el.setAttribute('opacity','.8')};
+      el.onmouseout=()=>el.setAttribute('opacity','1');
+      svg.appendChild(el);
+      if(th>25){
+        const m=(a0+a1)/2,t=document.createElementNS('http://www.w3.org/2000/svg','text');
+        t.setAttribute('x',62*Math.cos(m));t.setAttribute('y',62*Math.sin(m)+4);
+        t.setAttribute('text-anchor','middle');t.setAttribute('style','fill:#fff;font-size:12px;font-weight:700;pointer-events:none');
+        t.textContent=(c/n*100).toFixed(1)+'%';svg.appendChild(t);
+      }
+    }
+    a0=a1;
+    const d=document.createElement('div');
+    d.innerHTML=`<span class="sw" style="background:var(${colVars[i]})"></span>${mods[i]} — ${th.toFixed(1)}°`;
+    leg.appendChild(d);
+  });
+  document.getElementById('pieInfo').textContent='Sum of angles: '+(n?360:0)+'°';
+}
+
+let trunc=false,sorted=false;
+function renderBar(){
+  const svg=document.getElementById('bar');svg.innerHTML='';
+  let data=counts.map((c,i)=>({c,i}));
+  if(sorted)data.sort((a,b)=>b.c-a.c);
+  const mx=Math.max(1,...counts), mn=Math.min(...counts);
+  const ymin=trunc?Math.max(0,mn-3):0, ymax=Math.ceil(mx/10)*10||10;
+  const L=50,R=540,T=15,B=250,W=R-L,H=B-T;
+  const Y=v=>B-(v-ymin)/(ymax-ymin)*H;
+  const ns='http://www.w3.org/2000/svg';
+  const add=(tag,attrs,txt)=>{const e=document.createElementNS(ns,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(txt!==undefined)e.textContent=txt;svg.appendChild(e);return e};
+  const step=Math.max(1,Math.ceil((ymax-ymin)/5));
+  for(let v=ymin;v<=ymax;v+=step){
+    add('line',{x1:L,x2:R,y1:Y(v),y2:Y(v),stroke:'var(--line)'});
+    add('text',{x:L-8,y:Y(v)+4,'text-anchor':'end','font-size':11},v);
+  }
+  add('line',{x1:L,x2:L,y1:T,y2:B,stroke:'var(--muted)'});
+  add('line',{x1:L,x2:R,y1:B,y2:B,stroke:'var(--muted)'});
+  const bw=W/data.length;
+  data.forEach((d,k)=>{
+    const h=Math.max(0,B-Y(d.c)), x=L+k*bw+bw*0.18;
+    add('rect',{x,y:B-h,width:bw*0.64,height:h,rx:5,fill:colOf(d.i)});
+    add('text',{x:x+bw*0.32,y:B-h-6,'text-anchor':'middle','font-size':12,'font-weight':700},d.c);
+    add('text',{x:x+bw*0.32,y:B+18,'text-anchor':'middle','font-size':11},mods[d.i]);
+  });
+  if(trunc)add('text',{x:L+4,y:B+38,'font-size':11,style:'fill:var(--red)'},'⚠ axis starts at '+ymin+', not 0');
+  const msg=document.getElementById('barMsg');
+  if(trunc&&mx>0){
+    const a=Math.max(...counts),b=Math.min(...counts);
+    msg.innerHTML=`<span class="bad">Misleading:</span> true ratio of the extreme bars = ${(a/Math.max(b,1)).toFixed(1)}, but they look like ${((a-ymin)/Math.max(b-ymin,0.5)).toFixed(1)}×.`;
+  } else msg.textContent=sorted?'Sorted by decreasing frequency: the dominant modality appears at once (Pareto chart).':'Axis from zero: the ratio of two heights equals the ratio of the frequencies.';
+}
+document.getElementById('truncBtn').onclick=function(){trunc=!trunc;this.classList.toggle('on',trunc);this.textContent=trunc?'Restore the zero axis':'Truncate the axis';renderBar()};
+document.getElementById('sortBtn').onclick=function(){sorted=!sorted;this.classList.toggle('on',sorted);renderBar()};
+
+function refresh(){renderTable();renderPie();renderBar()}
+refresh();
+if(window.matchMedia)window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{renderPie();renderBar()});
+</script>
+</body>
+</html>
