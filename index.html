@@ -342,7 +342,7 @@ footer a:hover{text-decoration:underline}
 
 <footer>
   <div class="wrap">
-    <p>© 2026–2027 OUCHENE Abdelhak · <a id="repo-link" href="#" target="_blank" rel="noopener">Source on GitHub</a></p>
+    <p>© 2026–2027 OUCHENE Abdelhak</p>
   </div>
 </footer>
 
@@ -448,9 +448,6 @@ const TDS = [
   { n: 1, file: "td/TD1.pdf", solution: null }
 ];
 
-/* Optional: link to this repo from the footer */
-const MAIN_REPO = "https://github.com/YOUR-USERNAME/ps1-course";
-
 /* =============================================================
    Render — you shouldn't need to edit below this line
    ============================================================= */
@@ -547,8 +544,6 @@ TDS.forEach(t => {
   tdGrid.appendChild(card);
 });
 
-/* --- footer repo link --- */
-if (MAIN_REPO) $('repo-link').href = MAIN_REPO;
 </script>
 
 </body>
