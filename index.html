@@ -311,42 +311,24 @@ footer a:hover{text-decoration:underline}
       <div class="grid" id="sessions-grid"></div>
     </section>
 
-    <!-- ================================================================
-         SECTION 3: TUTORIALS (TD) — separate repo
+        <!-- ================================================================
+         SECTION 3: TUTORIALS (TD)
          ================================================================ -->
-    const TDS = [
-      { n: 1, file: "td/TD1.pdf", solution: null }
-    ];
-    const tdGrid = $('td-grid');
-    const tdSheetCount = TDS.filter(t => t.file).length;
-    const tdSolvedCount = TDS.filter(t => t.solution).length;
-    $('td-count').textContent = tdSheetCount + ' sheet' + (tdSheetCount === 1 ? '' : 's')
-                                + ' · ' + tdSolvedCount + ' solved';
-    
-    TDS.forEach(t => {
-      const card = document.createElement('article');
-      card.className = 'card';
-      const solBtn = t.solution
-        ? `<a class="btn" href="${t.solution}" target="_blank" rel="noopener">
-             ${icoPdf} Solution
-           </a>`
-        : `<span class="btn disabled">${icoPdf} Solution — soon</span>`;
-      card.innerHTML = `
-        <div class="card-head">
-          <span class="badge">TD${t.n}</span>
-          <span class="chapter-tag">Tutorial sheet ${t.n}</span>
-        </div>
-        <h3>Sheet ${t.n}</h3>
-        <p>${t.desc || 'Exercises covering the material of the corresponding sessions.'}</p>
-        <div class="actions">
-          <a class="btn primary" href="${t.file}" target="_blank" rel="noopener">
-            ${icoPdf} Open TD
-          </a>
-          ${solBtn}
-        </div>
-      `;
-      tdGrid.appendChild(card);
-    });
+    <section class="block" id="tutorials">
+      <div class="section-head">
+        <h2>
+          <span class="ico">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
+          </span>
+          Tutorials (TD)
+        </h2>
+        <span class="count" id="td-count"></span>
+      </div>
+      <p class="section-sub">
+        Exercise sheets and their solutions, released as the semester progresses.
+      </p>
+      <div class="grid" id="td-grid"></div>
+    </section>
 
     <div class="info">
       <b>How to use this page.</b> Click a chapter to download its PDF. Click <b>Open slides</b> to view a
@@ -457,14 +439,14 @@ const SESSIONS = [
 ];
 
 /* =============================================================
-   3. TUTORIALS (TD) — separate repository
-   Set `repo` to your TD repo URL when it is published,
-   or leave as null to display a "coming soon" state.
+   3. TUTORIALS (TD)
+   This is the only thing you edit each week:
+   - publish a sheet:  add { n, file: "td/TDN.pdf", solution: null }
+   - after the session: change solution to "td/TDN-Solution.pdf"
    ============================================================= */
-const TD_REPO = null;
-/* Example when published:
-   const TD_REPO = "https://github.com/YOUR-USERNAME/ps1-td";
-*/
+const TDS = [
+  { n: 1, file: "td/TD1.pdf", solution: null }
+];
 
 /* Optional: link to this repo from the footer */
 const MAIN_REPO = "https://github.com/YOUR-USERNAME/ps1-course";
@@ -537,30 +519,33 @@ SESSIONS.forEach(s => {
   sessionsGrid.appendChild(card);
 });
 
-/* --- 3. Tutorials (TD) banner --- */
-const tdBox = $('td-container');
-const hasTd = !!TD_REPO;
-const td = document.createElement('div');
-td.className = 'td-banner' + (hasTd ? '' : ' soon');
-td.innerHTML = `
-  <div class="td-text">
-    <h3>
-      <span class="ico-td">${icoTd}</span>
-      ${hasTd ? 'Exercise sheets and solutions' : 'Tutorial sessions — coming soon'}
-    </h3>
-    <p>
-      ${hasTd
-        ? 'Worked exercises, solutions and correction notes, session by session.'
-        : 'A dedicated repository for tutorial sheets, solutions and worked exercises is in preparation. It will be linked here as soon as it is published.'}
-    </p>
-  </div>
-  <div>
-    ${hasTd
-      ? `<a class="btn primary" href="${TD_REPO}" target="_blank" rel="noopener">Open tutorials repo →</a>`
-      : `<span class="btn">Coming soon</span>`}
-  </div>
-`;
-tdBox.appendChild(td);
+/* --- 3. Tutorials (TD) --- */
+const tdGrid = $('td-grid');
+const tdSheetCount = TDS.filter(t => t.file).length;
+const tdSolvedCount = TDS.filter(t => t.solution).length;
+$('td-count').textContent = tdSheetCount + ' sheet' + (tdSheetCount === 1 ? '' : 's')
+                            + ' · ' + tdSolvedCount + ' solved';
+
+TDS.forEach(t => {
+  const card = document.createElement('article');
+  card.className = 'card';
+  const solBtn = t.solution
+    ? `<a class="btn" href="${t.solution}" target="_blank" rel="noopener">${icoPdf} Solution</a>`
+    : `<span class="btn disabled">${icoPdf} Solution — soon</span>`;
+  card.innerHTML = `
+    <div class="card-head">
+      <span class="badge">TD${t.n}</span>
+      <span class="chapter-tag">Tutorial sheet ${t.n}</span>
+    </div>
+    <h3>Sheet ${t.n}</h3>
+    <p>${t.desc || 'Exercises covering the material of the corresponding sessions.'}</p>
+    <div class="actions">
+      <a class="btn primary" href="${t.file}" target="_blank" rel="noopener">${icoPdf} Open TD</a>
+      ${solBtn}
+    </div>
+  `;
+  tdGrid.appendChild(card);
+});
 
 /* --- footer repo link --- */
 if (MAIN_REPO) $('repo-link').href = MAIN_REPO;
