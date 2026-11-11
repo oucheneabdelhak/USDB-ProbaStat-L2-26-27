@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Probability and Statistics 1 — Chapter 1 · Session 2</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<style>
+:root{
+  --bg:#f4f6fb; --card:#ffffff; --ink:#1f2a44; --muted:#5d6b88;
+  --blue:#2f5fa8; --blue-soft:#e8f0fc; --green:#2e7d5b; --green-soft:#e6f4ed;
+  --purple:#6b4fa3; --purple-soft:#efeaf8; --orange:#c26a1b; --orange-soft:#fdf0e1;
+  --red:#b83b4a; --line:#dfe5f1;
+  --c1:#2f5fa8; --c2:#e08a3c; --c3:#3fa37a; --c4:#9a6bc4;
+}
+@media (prefers-color-scheme: dark){
+  :root{--bg:#121826;--card:#1b2336;--ink:#e6ebf7;--muted:#9aa8c7;--blue:#7aa7ee;--blue-soft:#202c47;
+  --green:#6cc79e;--green-soft:#1d3329;--purple:#b79af0;--purple-soft:#2a2342;--orange:#f0a766;--orange-soft:#3a2a1a;--line:#2c3856;--red:#ef7f8c}
+}
+html{ font-size: clamp(17px, 1.25vmin + 8px, 30px); }
+*{ box-sizing:border-box; }
+html, body{ height:100%; margin:0; }
+body{
+  font-family:"Inter","Segoe UI",system-ui,-apple-system,sans-serif;
+  background:var(--bg); color:var(--ink);
+  font-size:1rem; line-height:1.55; overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+#progress{ position:fixed; top:0; left:0; height:5px; width:0;
+  background:linear-gradient(90deg,var(--blue),var(--c3)); transition:width .35s; z-index:10; }
+header.top{ position:fixed; top:5px; left:0; right:0; display:flex;
+  justify-content:space-between; align-items:center;
+  padding:.55rem clamp(1rem, 3vw, 2.5rem); font-size:.82rem; color:var(--muted);
+  z-index:5; gap:1rem; }
+#deck{ position:absolute; inset: clamp(42px, 6vh, 64px) 0 clamp(64px, 8vh, 96px) 0; overflow:hidden; }
+.slide{ position:absolute; inset:0; overflow-y:auto;
+  padding: clamp(1rem, 2.4vh, 1.8rem) clamp(1.2rem, 4vw, 4rem) 2.5rem;
+  opacity:0; pointer-events:none; transform:translateX(30px);
+  transition:opacity .35s, transform .35s; }
+.slide.active{ opacity:1; pointer-events:auto; transform:none; }
+.wrap{ max-width:min(1500px, 95vw); margin:0 auto; }
+h1{ font-size:2.6rem; margin:.2em 0; letter-spacing:-.02em; line-height:1.1; }
+h2{ font-size:1.85rem; margin:0 0 .55em; letter-spacing:-.01em; line-height:1.2; }
+h2 .num{ display:inline-block; background:var(--blue); color:#fff;
+  border-radius:.35rem; padding:0 .55em; margin-right:.4em;
+  font-size:.62em; vertical-align:middle; }
+.sub{ color:var(--muted); font-size:1.08rem; }
+.card{ background:var(--card); border:1px solid var(--line); border-radius:1rem;
+  padding: clamp(.85rem, 1.5vh, 1.2rem) clamp(1.05rem, 1.8vw, 1.5rem);
+  margin: clamp(.65rem, 1.1vh, 1rem) 0; box-shadow:0 2px 10px rgba(30,50,90,.05); }
+.def  { border-left:5px solid var(--blue);   background:var(--blue-soft); }
+.ex   { border-left:5px solid var(--green);  background:var(--green-soft); }
+.prop { border-left:5px solid var(--purple); background:var(--purple-soft); }
+.rem  { border-left:5px solid var(--orange); background:var(--orange-soft); }
+.warn { border-left:5px solid var(--red); background:#fef2f2; }
+@media (prefers-color-scheme: dark){ .warn{ background:#2a1a1a; } }
+.tag{ display:inline-block; font-weight:700; font-size:.72rem; letter-spacing:.06em;
+  text-transform:uppercase; margin-bottom:.35em; padding:.1em .65em;
+  border-radius:.4rem; color:#fff; }
+.def  .tag{ background:var(--blue); }
+.ex   .tag{ background:var(--green); }
+.prop .tag{ background:var(--purple); }
+.rem  .tag{ background:var(--orange); }
+.warn .tag{ background:var(--red); }
+.grid2{ display:grid; grid-template-columns:1fr 1fr; gap: clamp(.7rem, 1.2vw, 1.1rem); }
+.grid3{ display:grid; grid-template-columns:repeat(3,1fr); gap: clamp(.7rem, 1.2vw, 1.1rem); }
+@media(max-width:820px){ .grid2, .grid3{ grid-template-columns:1fr; } h1{ font-size:2rem; } h2{ font-size:1.5rem; } }
+button{ font:inherit; cursor:pointer; border:1px solid var(--blue);
+  background:var(--card); color:var(--blue); padding:.45rem .9rem;
+  border-radius:.6rem; transition:.15s; font-size:.92rem; }
+button:hover{ background:var(--blue); color:#fff; }
+button.primary{ background:var(--blue); color:#fff; }
+button.primary:hover{ filter:brightness(1.1); }
+button.on{ background:var(--blue); color:#fff; }
+.hidden{ display:none; }
+.proof{ margin-top:.5rem; padding:.6rem .9rem; background:var(--card);
+  border:1px dashed var(--purple); border-radius:.6rem; }
+nav.bottom{ position:fixed; bottom:0; left:0; right:0; height: clamp(64px, 8vh, 96px);
+  display:flex; align-items:center; justify-content:center;
+  gap: clamp(.8rem, 2vw, 1.6rem); padding: 0 clamp(1rem, 3vw, 2.5rem);
+  background:var(--card); border-top:1px solid var(--line); z-index:6; }
+#dots{ display:flex; gap:.35rem; flex-wrap:wrap; justify-content:center; max-width:65vw; }
+#dots span{ width:.55rem; height:.55rem; border-radius:50%;
+  background:var(--line); cursor:pointer; transition:.2s; }
+#dots span.active{ background:var(--blue); transform:scale(1.5); }
+.chain-info{ min-height:2.4rem; text-align:center; color:var(--muted); font-size:.92rem; }
+table{ border-collapse:collapse; width:100%; }
+th, td{ padding:.5rem .65rem; text-align:center; border-bottom:1px solid var(--line); }
+th{ color:var(--blue); font-size:.92rem; }
+td:first-child, th:first-child{ text-align:left; }
+tfoot td{ font-weight:700; border-top:2px solid var(--blue); border-bottom:none; }
+.badge{ display:inline-block; padding:.15rem .7rem; border-radius:99px;
+  font-size:.85rem; font-weight:600; background:var(--green-soft); color:var(--green); }
+svg text{ fill:var(--ink); font-family:inherit; }
+.hint{ color:var(--muted); font-size:.9rem; }
+.sumlist li{ margin:.4rem 0; }
+.sl{ display:grid; grid-template-columns:10rem 1fr 4rem; gap:.6rem;
+  align-items:center; margin:.35rem 0; }
+.sl input{ width:100%; }
+@media(max-width:760px){ .sl{ grid-template-columns:1fr 1fr 3.5rem; } }
+.chart-svg{ width:100%; height:auto; display:block; max-width:100%; }
+.cum-btn{ display:block; width:100%; text-align:left; padding:.6rem .9rem;
+  background:var(--card); border:2px solid var(--line); border-radius:.7rem;
+  cursor:pointer; transition:.15s; font:inherit; color:inherit; }
+.cum-btn:hover{ border-color:var(--blue); }
+.cum-btn.on{ border-color:var(--blue); background:var(--blue-soft); }
+.cum-btn b{ display:block; font-size:1rem; color:var(--ink); }
+.cum-btn small{ color:var(--muted); font-size:.85rem; }
+.toggle-group{ display:flex; gap:.5rem; justify-content:center; margin:.5rem 0; flex-wrap:wrap; }
+.toggle-group button{ font-size:.88rem; font-weight:600; padding:.4rem .9rem;
+  border:1px solid var(--blue); border-radius:.5rem; background:var(--card); color:var(--blue); }
+.toggle-group button.on{ background:var(--blue); color:#fff; }
+.k-badge{ display:inline-block; background:var(--blue-soft); color:var(--blue);
+  padding:.15rem .7rem; border-radius:.4rem; font-weight:700; font-size:.95rem; }
+.cum-out{ display:flex; gap:1rem; justify-content:center; margin:.5rem 0; flex-wrap:wrap; }
+.cum-out > div{ background:var(--card); border:1px solid var(--line);
+  border-radius:.6rem; padding:.4rem 1rem; text-align:center; min-width:6rem; }
+.cum-out b{ display:block; font-size:1.4rem; color:var(--blue); line-height:1.1; }
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+<header class="top">
+  <span id="part">Probability and Statistics 1 · Chapter 1 · Session 2</span>
+  <span id="counter"></span>
+</header>
+
+<div id="deck">
+
+<!-- =================== SLIDE 1 — TITLE =================== -->
+<section class="slide" data-part="Chapter 1 · Session 2">
+<div class="wrap" style="text-align:center;padding-top:7vh">
+  <div class="sub">Probability and Statistics 1 · 2026–2027</div>
+  <h1>Chapter 1 · Session 2<br>Quantitative characters and grouped data</h1>
+  <p class="sub">Discrete and continuous variables, classes, histograms, polygons and cumulative curves</p>
+  <div class="card" style="display:inline-block;text-align:left;max-width:42rem">
+    <b>Today you will be able to:</b>
+    <ul>
+      <li>distinguish a discrete from a continuous quantitative character;</li>
+      <li>group continuous data into classes, and choose the number of classes;</li>
+      <li>read and build a histogram, a polygon of frequencies and a cumulative frequency curve.</li>
+    </ul>
+  </div>
+  <p class="hint">Session 1 counted qualitative modalities. Today, the same counting applies — but on the real line.</p>
+</div>
+</section>
+
+<!-- =================== SLIDE 2 — DISCRETE vs CONTINUOUS =================== -->
+<section class="slide" data-part="Chapter 1 · Session 2">
+<div class="wrap">
+  <h2><span class="num">1</span>Two kinds of quantitative character</h2>
+  <div class="grid2">
+    <div class="card def">
+      <span class="tag">Discrete quantitative</span><br>
+      Values are <i>isolated</i>, generally integers: the number of distinct values is finite and small.
+      <p class="hint">Number of GPUs per node (1, 2, 4, 8, 16), commits per day, failed login attempts.</p>
+    </div>
+    <div class="card def">
+      <span class="tag">Continuous quantitative</span><br>
+      Values fill an <i>interval</i>: in principle infinitely many, rarely repeated because the measurement has finite precision.
+      <p class="hint">Latency (ms), dataset size (GB), energy (MWh), detection time (h).</p>
+    </div>
+  </div>
+  <div class="card ex">
+    <span class="tag">What changes from Session 1</span><br>
+    Counting is <b>exactly the same</b>: \(n_i\), \(f_i=n_i/n\), \(p_i=100f_i\), sums to \(n\), \(1\) and \(100\). What changes is the <b>shape of the table</b>:
+    <ul style="margin:.4rem 0 0; padding-left:1.2rem;">
+      <li>Discrete — one row per <i>observed value</i>;</li>
+      <li>Continuous — one row per <b>class</b> (an interval), because a table with one row per value would have as many rows as the sample has individuals.</li>
+    </ul>
+  </div>
+  <div class="card rem">
+    <span class="tag">Why grouping loses information</span><br>
+    Two datasets with the same class counts may have different means and different variances. What is gained is <i>legibility</i> and <i>robustness to isolated extremes</i>; what is lost is the exact position of each observation inside its class.
+  </div>
+</div>
+</section>
+
+<!-- =================== SLIDE 3 — CLASSES =================== -->
+<section class="slide" data-part="Chapter 1 · Session 2">
+<div class="wrap">
+  <h2><span class="num">2</span>Classes, centres and amplitudes</h2>
+  <div class="card def">
+    <span class="tag">Definition</span><br>
+    A <b>class</b> is an interval \([a_i,b_i[\) into which the values of a continuous character are grouped. Its <b>centre</b> and its <b>amplitude</b> are
+    \[
+      x_i \;=\; \frac{a_i+b_i}{2},
+      \qquad
+      a \;=\; b_i - a_i .
+    \]
+  </div>
+  <div class="card ex">
+    <span class="tag">Example</span><br>
+    For the class \([50;60[\):
+    \[
+      x_i = \frac{50+60}{2} = 55\ \text{ms},
+      \qquad
+      a = 60 - 50 = 10\ \text{ms}.
+    \]
+  </div>
+  <div class="card prop">
+    <span class="tag">Two rules for the classes</span>
+    <ol style="margin:.3rem 0 0; padding-left:1.3rem;">
+      <li>The classes must be <b>disjoint</b>: \( [a_i,b_i[ \cap [a_j,b_j[ = \varnothing \) for \(i\neq j\).</li>
+      <li>Their union must <b>contain every observation</b>: \( \bigcup_i [a_i,b_i[ \supseteq \{x_1,\dots,x_n\} \).</li>
+    </ol>
+  </div>
+  <div class="card rem">
+    <span class="tag">Remark — discretisation</span><br>
+    From now on, an observation in \([a_i,b_i[\) will be treated as if it were worth its class centre \(x_i\). This is the same move as replacing an object by its centre of gravity: it allows the formulas of the discrete case to apply unchanged. The approximation is negligible when the classes are narrow and equal.
+  </div>
+</div>
+</section>
+
+<!-- =================== SLIDE 4 — CHOOSING K =================== -->
+<section class="slide" data-part="Chapter 1 · Session 2">
+<div class="wrap">
+  <h2><span class="num">3</span>How many classes?</h2>
+  <div class="card prop">
+    <span class="tag">Rule of thumb</span><br>
+    For a sample of size \(n\) and a range \(r = x_{\max}-x_{\min}\):
+    \[
+      K \;=\;
+      \begin{cases}
+        \sqrt{n} & \text{if } n<50,\\[4pt]
+        1+\dfrac{10}{3}\log_{10}(n) & \text{if } n\ge 50,
+      \end{cases}
+      \qquad
+      a = \frac{r}{K}.
+    \]
+    It is recommended to choose an <b>odd</b> number of classes and a <b>round amplitude</b> \(a\).
+  </div>
+  <div class="card ex">
+    <span class="tag">Example — inference latency, n = 100</span><br>
+    \(r = 80-30 = 50\) ms. The rule gives \(K = 1 + \tfrac{10}{3}\log_{10}(100) = 7.67\).
+    We round to <b>K = 5</b> with amplitude \(a = 50/5 = 10\) ms: a clean value in the unit of the data.
+  </div>
+  <div class="card">
+    <b>Try it.</b> Same 100 latencies, vary the number of classes:
+    <div class="sl">
+      <label>Number of classes K</label>
+      <input type="range" id="kSlider" min="3" max="10" step="1" value="5">
+      <b id="kVal">5</b>
+    </div>
+    <div style="display:flex; gap:.6rem; flex-wrap:wrap; justify-content:center; margin:.4rem 0;">
+      <span class="k-badge">Amplitude a = <span id="kAmp">10</span> ms</span>
+      <span class="k-badge">Rule gives K ≈ 7.67</span>
+    </div>
+    <svg id="kHisto" class="chart-svg" viewBox="0 0 560 300"></svg>
+    <p class="hint" id="kNote" style="text-align:center">
+      Too few classes (K = 3): the shape disappears. Too many (K = 10): the noise of the sample
+      dominates. K = 5 gives the table used in the next slide.
+    </p>
+  </div>
+</div>
+</section>
+
+<!-- =================== SLIDE 5 — FREQUENCY TABLE =================== -->
+<section class="slide" data-part="Chapter 1 · Session 2">
+<div class="wrap">
+  <h2><span class="num">4</span>The grouped frequency table</h2>
+  <p>Same three quantities as Session 1 — \(n_i\), \(f_i=n_i/n\), \(p_i=100f_i\) — plus a fourth column for the cumulative frequencies.</p>
+  <div class="card">
+    <table>
+      <thead>
+        <tr>
+          <th>Class</th><th>Centre \(x_i\)</th><th>\(n_i\)</th>
+          <th>\(f_i\)</th><th>\(p_i\,(\%)\)</th><th>\(n_i^{\nearrow}\)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>\([30;40[\)</td><td>35</td><td> 8</td><td>0.08</td><td> 8</td><td> 8</td></tr>
+        <tr><td>\([40;50[\)</td><td>45</td><td>22</td><td>0.22</td><td>22</td><td>30</td></tr>
+        <tr><td>\([50;60[\)</td><td>55</td><td>41</td><td>0.41</td><td>41</td><td>71</td></tr>
+        <tr><td>\([60;70[\)</td><td>65</td><td>21</td><td>0.21</td><td>21</td><td>92</td></tr>
+        <tr><td>\([70;80[\)</td><td>75</td><td> 8</td><td>0.08</td><td> 8</td><td>100</td></tr>
+      </tbody>
+      <tfoot><tr><td>Total</td><td>—</td><td>100</td><td>1.00</td><td>100</td><td>—</td></tr></tfoot>
+    </table>
+    <p class="hint" style="text-align:center">
+      This table is the input of Chapter 2: mean, variance and quartiles of a continuous variable
+      are computed from these \(n_i\) and \(x_i\).
+    </p>
+  </div>
+  <div class="card ex">
+    <span class="tag">Same idea as the discrete case</span>
+    For the GPU dataset (values \(1,2,4,8,16\), counts \(12,20,16,9,3\)) the table is <i>one row per value</i>, no classes: it is the discrete version of the table above.
+  </div>
+</div>
+</section>
+
+<!-- =================== SLIDE 6 — CUMULATIVE FREQUENCIES =================== -->
+<section class="slide" data-part="Chapter 1 · Session 2">
+<div class="wrap">
+  <h2><span class="num">5</span>Cumulative frequencies</h2>
+  <div class="card def">
+    <span class="tag">Definition</span><br>
+    The <b>increasing cumulative absolute frequency</b> of class \(i\) is
+    \[
+      n_i^{\nearrow} \;=\; n_1 + n_2 + \dots + n_i ,
+    \]
+    the number of observations whose value is \(\le\) the upper bound of class \(i\).
+  </div>
+  <div class="card prop">
+    <span class="tag">Properties</span>
+    <ul style="margin:.3rem 0 0; padding-left:1.2rem;">
+      <li>\(n_1^{\nearrow} = n_1\) and \(n_K^{\nearrow} = n\) — the curve starts at the first frequency and ends at the sample size;</li>
+      <li>The sequence \((n_i^{\nearrow})\) is <b>non-decreasing</b>;</li>
+      <li>The corresponding relative cumulative is \(f_i^{\nearrow} = n_i^{\nearrow}/n\), and \(f_K^{\nearrow}=1\).</li>
+    </ul>
+  </div>
+  <div class="card">
+    <b>Try it.</b> Click a class:
+    <div class="grid3" id="cumButtons" style="margin-top:.6rem;"></div>
+    <div class="chain-info" id="cumInfo" style="margin-top:.8rem;">Click a class to see how many requests are below it.</div>
+  </div>
+</div>
+</section>
+
+<!-- =================== SLIDE 7 — BAR CHART =================== -->
+<section class="slide" data-part="Chapter 1 · Session 2">
+<div class="wrap">
+  <h2><span class="num">6</span>Bar chart for a discrete quantitative variable</h2>
+  <div class="card def">
+    <span class="tag">Definition</span><br>
+    Each value \(x_i\) is a vertical rectangle of height proportional to \(n_i\). Unlike the qualitative case, the values are placed on the axis <b>in their natural numerical order</b> — the spacing between bars carries information.
+  </div>
+  <div class="card">
+    <b>Number of GPUs per node (n = 60).</b> Toggle between the two views:
+    <div class="toggle-group" id="gpuToggle">
+      <button data-mode="bar" class="on">Bar chart</button>
+      <button data-mode="poly">Polygon of frequencies</button>
+    </div>
+    <svg id="gpuChart" class="chart-svg" viewBox="0 0 560 300"></svg>
+    <p class="hint" id="gpuNote" style="text-align:center">
+      The values 1, 2, 4, 8, 16 are not equally spaced. The gap between the bars of 8 and 16 reflects the data, not a drawing accident.
+    </p>
+  </div>
+</div>
+</section>
+
+<!-- =================== SLIDE 8 — POLYGON =================== -->
+<section class="slide" data-part="Chapter 1 · Session 2">
+<div class="wrap">
+  <h2><span class="num">7</span>Polygon of frequencies</h2>
+  <div class="card def">
+    <span class="tag">Definition</span><br>
+    The <b>polygon of frequencies</b> of a discrete quantitative variable joins the points \((x_i,n_i)\), extended by \((x_1-a,0)\) and \((x_k+a,0)\) where \(a\) is the common spacing of the values (or a visual padding when the values are not equally spaced).
+  </div>
+  <div class="card">
+    <svg id="gpuPoly" class="chart-svg" viewBox="0 0 560 300"></svg>
+    <p class="hint" style="text-align:center">
+      Same data as the previous slide. The profile shows at once that the distribution is concentrated on small values, with a long right tail.
+    </p>
+  </div>
+  <div class="card rem">
+    <span class="tag">When to use it</span><br>
+    The polygon is preferred to the bar chart when the variable is quantitative and the number of distinct values is large: a broken line shows the <i>profile</i>, the mode and the asymmetry, whereas a forest of bars hides them. For a <b>qualitative</b> character the polygon is meaningless — the order of the modalities is arbitrary.
+  </div>
+</div>
+</section>
+
+<!-- =================== SLIDE 9 — HISTOGRAM =================== -->
+<section class="slide" data-part="Chapter 1 · Session 2">
+<div class="wrap">
+  <h2><span class="num">8</span>Histogram — the area counts, not the height</h2>
+  <div class="card def">
+    <span class="tag">Definition</span><br>
+    The <b>histogram</b> of a continuous variable in classes is a set of rectangles with base = class interval and height
+    \[
+      h_i = n_i\ \text{when all classes have the same amplitude,}
+      \qquad
+      h_i = \frac{n_i}{a_i}\ \text{when amplitudes differ.}
+    \]
+    <b>In all cases, the <i>area</i> of a rectangle is proportional to the number of observations.</b>
+  </div>
+  <div class="card">
+    <b>The pitfall.</b> Below is the same data with one wider class: \([30;40[,[40;50[,[50;60[,[60;80[\). Same counts \(8,22,41,29\). Two histograms:
+    <div class="grid2" style="margin-top:.6rem;">
+      <div>
+        <svg id="histoWrong" class="chart-svg" viewBox="0 0 560 300"></svg>
+        <p class="hint" style="text-align:center; color:var(--red);">❌ Heights = \(n_i\) — the wide class looks twice as important as it is.</p>
+      </div>
+      <div>
+        <svg id="histoRight" class="chart-svg" viewBox="0 0 560 300"></svg>
+        <p class="hint" style="text-align:center; color:var(--green);">✓ Heights = \(n_i/a_i\) — the area is proportional to the count.</p>
+      </div>
+    </div>
+  </div>
+  <div class="card warn">
+    <span class="tag">Histogram ≠ bar chart</span><br>
+    In a bar chart, only the <b>height</b> counts; the width is arbitrary. In a histogram, the <b>area</b> counts; the width is the amplitude of a class. Drawing a histogram with unequal classes and heights equal to the counts is a mistake, not a stylistic choice.
+  </div>
+</div>
+</section>
+
+<!-- =================== SLIDE 10 — CUMULATIVE CURVE =================== -->
+<section class="slide" data-part="Chapter 1 · Session 2">
+<div class="wrap">
+  <h2><span class="num">9</span>Cumulative frequency curve</h2>
+  <div class="card def">
+    <span class="tag">Definition</span><br>
+    The <b>cumulative frequency curve</b> plots the increasing cumulative frequency \(n_i^{\nearrow}\) against the upper bound of each class and joins the points by segments. It is non-decreasing, starts at \(0\) and ends at \(n\).
+  </div>
+  <div class="card">
+    <b>Try it.</b> Move the slider to read the curve at any latency:
+    <div class="sl">
+      <label>Latency x (ms)</label>
+      <input type="range" id="cumSlider" min="30" max="80" step="0.5" value="55">
+      <b id="cumX">55.0</b>
+    </div>
+    <svg id="cumChart" class="chart-svg" viewBox="0 0 560 300"></svg>
+    <div class="cum-out" id="cumOut">
+      <div><span class="hint">Below x</span><b id="cumCount">50.0</b></div>
+      <div><span class="hint">Fraction</span><b id="cumFrac">50.0%</b></div>
+      <div><span class="hint">Median latency</span><b>54.9</b></div>
+    </div>
+    <p class="hint" style="text-align:center">
+      The median is the abscissa at which the cumulative reaches \(n/2 = 50\); the curve reads it directly as \(\approx 54.9\) ms.
+    </p>
+  </div>
+  <div class="card rem">
+    <span class="tag">What this curve is for</span><br>
+    It answers <i>“how many observations are below a threshold?”</i> and <i>“below which threshold do half the observations lie?”</i>. It is the graphical counterpart of the cumulative frequencies and the object that will become a <b>distribution function</b> in Chapter 3.
+  </div>
+</div>
+</section>
+
+<!-- =================== SLIDE 11 — SUMMARY =================== -->
+<section class="slide" data-part="Chapter 1 · Session 2">
+<div class="wrap">
+  <h2><span class="num">✓</span>Summary of Session 2</h2>
+  <div class="card">
+    <ul class="sumlist">
+      <li>A quantitative character is <b>discrete</b> (isolated values) or <b>continuous</b> (any value in an interval).</li>
+      <li>Continuous data are grouped into <b>classes</b> \([a_i,b_i[\), with centre \(x_i=(a_i+b_i)/2\) and amplitude \(a=b_i-a_i\).</li>
+      <li>Choice of K: \(K=\sqrt{n}\) if \(n<50\); \(K=1+\tfrac{10}{3}\log_{10}n\) if \(n\ge 50\); amplitude \(a=r/K\), rounded to a convenient value.</li>
+      <li>Cumulative frequencies: \(n_i^{\nearrow}=n_1+\dots+n_i\), from \(n_1\) to \(n\).</li>
+      <li><b>Histogram</b>: area is proportional to count. With equal amplitudes, height \(=n_i\); with unequal amplitudes, height \(=n_i/a_i\).</li>
+      <li><b>Polygon</b> and <b>cumulative curve</b> are profile views of the same data, used for shape and for percentiles.</li>
+    </ul>
+  </div>
+  <div class="card warn">
+    <span class="tag">Common mistakes</span>
+    <ul class="sumlist">
+      <li>Drawing a histogram with unequal class widths and heights equal to the counts.</li>
+      <li>Confusing a bar chart (width arbitrary) with a histogram (width = class amplitude).</li>
+      <li>Choosing the classes <i>after</i> looking at the data to make one class stand out.</li>
+      <li>Reading the median from the <i>counts</i> instead of from the <i>cumulative</i> column.</li>
+      <li>Using the polygon or cumulative curve for a qualitative character.</li>
+    </ul>
+  </div>
+  <p class="sub" style="text-align:center">
+    End of Session 2. Next session (Chapter 2): position parameters — mode, means, median and quartiles.
+  </p>
+</div>
+</section>
+
+</div>
+
+<nav class="bottom">
+  <button id="prev">← Previous</button>
+  <div id="dots"></div>
+  <button id="next" class="primary">Next →</button>
+</nav>
+
+<script>
+/* ---------- Slide engine ---------- */
+const slides=[...document.querySelectorAll('.slide')];
+let cur=0;
+const dots=document.getElementById('dots');
+slides.forEach((s,i)=>{const d=document.createElement('span');d.onclick=()=>go(i);dots.appendChild(d)});
+function go(i){
+  cur=Math.max(0,Math.min(slides.length-1,i));
+  slides.forEach((s,k)=>s.classList.toggle('active',k===cur));
+  [...dots.children].forEach((d,k)=>d.classList.toggle('active',k===cur));
+  document.getElementById('progress').style.width=((cur+1)/slides.length*100)+'%';
+  document.getElementById('counter').textContent=(cur+1)+' / '+slides.length;
+  document.getElementById('part').textContent='Probability and Statistics 1 · '+slides[cur].dataset.part;
+  slides[cur].scrollTop=0;
+  document.getElementById('prev').style.visibility=cur?'visible':'hidden';
+  document.getElementById('next').style.visibility=cur<slides.length-1?'visible':'hidden';
+}
+document.getElementById('prev').onclick=()=>go(cur-1);
+document.getElementById('next').onclick=()=>go(cur+1);
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='INPUT'&&e.target.type!=='range')return;
+  if(e.key==='ArrowRight'||e.key==='PageDown')go(cur+1);
+  if(e.key==='ArrowLeft'||e.key==='PageUp')go(cur-1);
+  if(e.key==='f'||e.key==='F'){
+    if(!document.fullscreenElement)document.documentElement.requestFullscreen();
+    else document.exitFullscreen();
+  }
+});
+
+/* ---------- KaTeX ---------- */
+function typeset(){
+  if(window.renderMathInElement){
+    renderMathInElement(document.body,{delimiters:[
+      {left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false}],throwOnError:false});
+  }
+}
+window.addEventListener('load',()=>{typeset();go(0)});
+go(0);
+
+/* =================================================================
+   DATA
+   ================================================================= */
+// 100 latencies engineered so that grouping into 5 classes of 10 ms
+// gives exactly [8, 22, 41, 21, 8] — the table used on slide 5.
+function makeLatencies(){
+  const counts=[8,22,41,21,8];
+  const arr=[];
+  counts.forEach((c,i)=>{
+    const lo=30+i*10;
+    for(let j=0;j<c;j++) arr.push(+(lo+(j+0.5)*10/c).toFixed(3));
+  });
+  return arr;
+}
+const LATENCIES = makeLatencies();
+
+// Cumulative function of the 5-class grouping, used on slide 10
+const BOUNDS=[30,40,50,60,70,80];
+const CUMUL =[0, 8,30,71,92,100];
+function cumulativeAt(x){
+  if(x<=BOUNDS[0])return 0;
+  if(x>=BOUNDS[5])return 100;
+  for(let i=0;i<5;i++){
+    if(x<=BOUNDS[i+1]){
+      const t=(x-BOUNDS[i])/(BOUNDS[i+1]-BOUNDS[i]);
+      return CUMUL[i]+t*(CUMUL[i+1]-CUMUL[i]);
+    }
+  }
+  return 100;
+}
+
+/* =================================================================
+   SLIDE 4 — Class count explorer
+   ================================================================= */
+const kSlider=document.getElementById('kSlider');
+const kHisto=document.getElementById('kHisto');
+
+function classCounts(K,lo,hi){
+  const w=(hi-lo)/K;
+  const c=new Array(K).fill(0);
+  LATENCIES.forEach(v=>{
+    let k=Math.floor((v-lo)/w);
+    if(k>=K)k=K-1;
+    if(k<0)k=0;
+    c[k]++;
+  });
+  return {w,counts:c};
+}
+
+function renderKHistogram(K){
+  const lo=30,hi=80;
+  const {w,counts}=classCounts(K,lo,hi);
+  const W=560,H=300,L=50,R=540,T=20,B=260;
+  const plotW=R-L,plotH=B-T;
+  const ymax=Math.max(...counts)*1.2||1;
+  const xToPx=x=>L+(x-lo)/(hi-lo)*plotW;
+  const yToPx=y=>B-(y/ymax)*plotH;
+  let html='';
+  // grid
+  const step=Math.max(1,Math.ceil(ymax/5));
+  for(let y=0;y<=ymax;y+=step){
+    html+=`<line x1="${L}" x2="${R}" y1="${yToPx(y)}" y2="${yToPx(y)}" stroke="var(--line)"/>`;
+    html+=`<text x="${L-6}" y="${yToPx(y)+4}" text-anchor="end" font-size="11">${y}</text>`;
+  }
+  // axes
+  html+=`<line x1="${L}" x2="${L}" y1="${T}" y2="${B}" stroke="var(--muted)"/>`;
+  html+=`<line x1="${L}" x2="${R}" y1="${B}" y2="${B}" stroke="var(--muted)"/>`;
+  // bars
+  counts.forEach((c,i)=>{
+    const cLo=lo+i*w,cHi=cLo+w;
+    const x=xToPx(cLo),x2=xToPx(cHi);
+    const y=yToPx(c),h=B-y;
+    html+=`<rect x="${x+0.5}" y="${y}" width="${x2-x-1}" height="${h}" fill="var(--c1)" opacity="0.85"/>`;
+    html+=`<text x="${(x+x2)/2}" y="${y-4}" text-anchor="middle" font-size="11" font-weight="700">${c}</text>`;
+  });
+  // x labels
+  const nLab=Math.min(K+1,7);
+  for(let i=0;i<=nLab;i++){
+    const v=lo+(hi-lo)*i/nLab;
+    html+=`<text x="${xToPx(v)}" y="${B+18}" text-anchor="middle" font-size="11">${v.toFixed(0)}</text>`;
+  }
+  html+=`<text x="${(L+R)/2}" y="${H-6}" text-anchor="middle" font-size="11">Latency (ms)</text>`;
+  kHisto.innerHTML=html;
+
+  document.getElementById('kVal').textContent=K;
+  document.getElementById('kAmp').textContent=(50/K).toFixed(1);
+  const note=document.getElementById('kNote');
+  if(K===5){
+    note.innerHTML='<b style="color:var(--green)">This is K = 5: the table of the next slide.</b> Amplitude 10 ms, clean values, shape visible.';
+  } else if(K<=4){
+    note.innerHTML='Too few classes: the shape is lost, several distinct phenomena are lumped together.';
+  } else {
+    note.innerHTML='More classes: detail grows, but so does the noise of the sample. The rule of thumb gives K ≈ 7.67, which we rounded to 5 for a clean amplitude.';
+  }
+}
+kSlider.oninput=()=>renderKHistogram(+kSlider.value);
+renderKHistogram(5);
+
+/* =================================================================
+   SLIDE 6 — Cumulative frequencies click
+   ================================================================= */
+const CUM_DATA=[
+  {cls:'[30;40[', upper:40, count: 8, cum: 8},
+  {cls:'[40;50[', upper:50, count:22, cum:30},
+  {cls:'[50;60[', upper:60, count:41, cum:71},
+  {cls:'[60;70[', upper:70, count:21, cum:92},
+  {cls:'[70;80[', upper:80, count: 8, cum:100}
+];
+const cumButtons=document.getElementById('cumButtons');
+const cumInfo=document.getElementById('cumInfo');
+CUM_DATA.forEach((d,i)=>{
+  const b=document.createElement('button');
+  b.className='cum-btn';
+  b.innerHTML=`<b>${d.cls}</b><small>n_i = ${d.count}</small>`;
+  b.onclick=()=>{
+    document.querySelectorAll('#cumButtons .cum-btn').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');
+    cumInfo.innerHTML=`<b>${d.cum}</b> of 100 requests are below <b>${d.upper} ms</b> — that is <b>${d.cum.toFixed(0)}%</b>. The cumulative frequency column counts every observation in this class and all classes below it.`;
+  };
+  cumButtons.appendChild(b);
+});
+
+/* =================================================================
+   SLIDES 7 and 8 — Bar chart vs polygon for the GPU data
+   ================================================================= */
+const GPU=[[1,12],[2,20],[4,16],[8,9],[16,3]];
+
+function renderGpuChart(svg,mode){
+  const W=560,H=300,L=50,R=540,T=20,B=260;
+  const plotW=R-L,plotH=B-T;
+  const xmin=0,xmax=18,ymax=25;
+  const xToPx=x=>L+(x-xmin)/(xmax-xmin)*plotW;
+  const yToPx=y=>B-(y/ymax)*plotH;
+  let html='';
+  // grid
+  for(let y=0;y<=ymax;y+=5){
+    html+=`<line x1="${L}" x2="${R}" y1="${yToPx(y)}" y2="${yToPx(y)}" stroke="var(--line)"/>`;
+    html+=`<text x="${L-6}" y="${yToPx(y)+4}" text-anchor="end" font-size="11">${y}</text>`;
+  }
+  // axes
+  html+=`<line x1="${L}" x2="${L}" y1="${T}" y2="${B}" stroke="var(--muted)"/>`;
+  html+=`<line x1="${L}" x2="${R}" y1="${B}" y2="${B}" stroke="var(--muted)"/>`;
+  // x labels
+  [1,4,8,12,16].forEach(v=>{
+    html+=`<text x="${xToPx(v)}" y="${B+18}" text-anchor="middle" font-size="11">${v}</text>`;
+  });
+  if(mode==='bar'){
+    const barW=1.0;
+    GPU.forEach(([v,c])=>{
+      const x=xToPx(v-barW/2);
+      const w=xToPx(v+barW/2)-x;
+      const y=yToPx(c);
+      html+=`<rect x="${x}" y="${y}" width="${w}" height="${B-y}" rx="5" fill="var(--c1)" opacity="0.85"/>`;
+      html+=`<text x="${xToPx(v)}" y="${y-6}" text-anchor="middle" font-size="12" font-weight="700">${c}</text>`;
+    });
+  } else {
+    const pts=[[0,0],...GPU,[17,0]];
+    const ptsStr=pts.map(([v,c])=>`${xToPx(v)},${yToPx(c)}`).join(' ');
+    html+=`<polyline points="${ptsStr}" fill="none" stroke="var(--c1)" stroke-width="2.5"/>`;
+    pts.forEach(([v,c])=>{
+      html+=`<circle cx="${xToPx(v)}" cy="${yToPx(c)}" r="4.5" fill="var(--c1)" stroke="var(--card)" stroke-width="1.5"/>`;
+      if(v>0&&v<17){
+        html+=`<text x="${xToPx(v)}" y="${yToPx(c)-11}" text-anchor="middle" font-size="11" font-weight="700">${c}</text>`;
+      }
+    });
+  }
+  html+=`<text x="${(L+R)/2}" y="${H-6}" text-anchor="middle" font-size="11">Number of GPUs per node</text>`;
+  svg.innerHTML=html;
+}
+
+const gpuChart=document.getElementById('gpuChart');
+const gpuNote=document.getElementById('gpuNote');
+let gpuMode='bar';
+document.querySelectorAll('#gpuToggle button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('#gpuToggle button').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on');
+  gpuMode=b.dataset.mode;
+  renderGpuChart(gpuChart,gpuMode);
+  gpuNote.textContent = gpuMode==='bar'
+    ? 'The values 1, 2, 4, 8, 16 are not equally spaced: the gap between the bars reflects the data, not a drawing accident.'
+    : 'The polygon joins (1,12),(2,20),(4,16),(8,9),(16,3). The extended endpoints (0,0) and (17,0) close the profile.';
+});
+renderGpuChart(gpuChart,'bar');
+
+// Slide 8 — polygon only
+renderGpuChart(document.getElementById('gpuPoly'),'poly');
+
+/* =================================================================
+   SLIDE 9 — Histogram comparison (wrong vs right)
+   ================================================================= */
+const CLASSES4=[
+  {lo:30,hi:40,count: 8,w:10},
+  {lo:40,hi:50,count:22,w:10},
+  {lo:50,hi:60,count:41,w:10},
+  {lo:60,hi:80,count:29,w:20}
+];
+
+function renderComparison(svg,mode){
+  const W=560,H=300,L=50,R=540,T=20,B=260;
+  const plotW=R-L,plotH=B-T;
+  const lo=30,hi=80;
+  const xToPx=x=>L+(x-lo)/(hi-lo)*plotW;
+  // 'wrong': heights = counts; 'right': heights = count / width * 10 (normalised to 10 ms)
+  const heights=CLASSES4.map(c=>mode==='wrong'?c.count:c.count/c.w*10);
+  const ymax=Math.max(...heights)*1.2;
+  const yToPx=y=>B-(y/ymax)*plotH;
+  let html='';
+  // grid
+  const step=Math.max(1,Math.ceil(ymax/5));
+  for(let y=0;y<=ymax;y+=step){
+    html+=`<line x1="${L}" x2="${R}" y1="${yToPx(y)}" y2="${yToPx(y)}" stroke="var(--line)"/>`;
+    html+=`<text x="${L-6}" y="${yToPx(y)+4}" text-anchor="end" font-size="11">${y.toFixed(0)}</text>`;
+  }
+  // axes
+  html+=`<line x1="${L}" x2="${L}" y1="${T}" y2="${B}" stroke="var(--muted)"/>`;
+  html+=`<line x1="${L}" x2="${R}" y1="${B}" y2="${B}" stroke="var(--muted)"/>`;
+  // bars
+  CLASSES4.forEach((c,i)=>{
+    const x=xToPx(c.lo),x2=xToPx(c.hi);
+    const y=yToPx(heights[i]);
+    const fill=mode==='wrong'?'var(--red)':'var(--c1)';
+    html+=`<rect x="${x+0.5}" y="${y}" width="${x2-x-1}" height="${B-y}" fill="${fill}" opacity="0.85"/>`;
+    html+=`<text x="${(x+x2)/2}" y="${y-4}" text-anchor="middle" font-size="11" font-weight="700">${c.count}</text>`;
+    html+=`<text x="${(x+x2)/2}" y="${B+18}" text-anchor="middle" font-size="10">${c.w}ms</text>`;
+  });
+  html+=`<text x="${(L+R)/2}" y="${H-6}" text-anchor="middle" font-size="11">Latency (ms)</text>`;
+  svg.innerHTML=html;
+}
+renderComparison(document.getElementById('histoWrong'),'wrong');
+renderComparison(document.getElementById('histoRight'),'right');
+
+/* =================================================================
+   SLIDE 10 — Cumulative frequency curve with slider
+   ================================================================= */
+const cumChart=document.getElementById('cumChart');
+const cumSlider=document.getElementById('cumSlider');
+function renderCumChart(xVal){
+  const W=560,H=300,L=55,R=540,T=20,B=260;
+  const plotW=R-L,plotH=B-T;
+  const xmin=28,xmax=82,ymin=0,ymax=105;
+  const xToPx=x=>L+(x-xmin)/(xmax-xmin)*plotW;
+  const yToPx=y=>B-(y-ymin)/(ymax-ymin)*plotH;
+  const pts=[[30,0],[40,8],[50,30],[60,71],[70,92],[80,100]];
+  let html='';
+  // grid
+  for(let y=0;y<=100;y+=25){
+    html+=`<line x1="${L}" x2="${R}" y1="${yToPx(y)}" y2="${yToPx(y)}" stroke="var(--line)"/>`;
+    html+=`<text x="${L-6}" y="${yToPx(y)+4}" text-anchor="end" font-size="11">${y}</text>`;
+  }
+  // axes
+  html+=`<line x1="${L}" x2="${L}" y1="${T}" y2="${B}" stroke="var(--muted)"/>`;
+  html+=`<line x1="${L}" x2="${R}" y1="${B}" y2="${B}" stroke="var(--muted)"/>`;
+  // x labels
+  [30,40,50,60,70,80].forEach(v=>{
+    html+=`<text x="${xToPx(v)}" y="${B+18}" text-anchor="middle" font-size="11">${v}</text>`;
+  });
+  // curve
+  html+=`<polyline points="${pts.map(([v,c])=>`${xToPx(v)},${yToPx(c)}`).join(' ')}" fill="none" stroke="var(--c1)" stroke-width="2.5"/>`;
+  // dashed n/2
+  html+=`<line x1="${L}" x2="${R}" y1="${yToPx(50)}" y2="${yToPx(50)}" stroke="var(--muted)" stroke-dasharray="4,4" opacity="0.7"/>`;
+  html+=`<text x="${R-4}" y="${yToPx(50)-4}" text-anchor="end" font-size="10" fill="var(--muted)">n/2 = 50</text>`;
+  // points
+  pts.forEach(([v,c])=>{
+    html+=`<circle cx="${xToPx(v)}" cy="${yToPx(c)}" r="3.5" fill="var(--c1)"/>`;
+  });
+  // current marker
+  const cum=cumulativeAt(xVal);
+  html+=`<line x1="${xToPx(xVal)}" x2="${xToPx(xVal)}" y1="${yToPx(0)}" y2="${yToPx(cum)}" stroke="var(--c2)" stroke-width="2" stroke-dasharray="4,3"/>`;
+  html+=`<line x1="${L}" x2="${xToPx(xVal)}" y1="${yToPx(cum)}" y2="${yToPx(cum)}" stroke="var(--c2)" stroke-width="2" stroke-dasharray="4,3"/>`;
+  html+=`<circle cx="${xToPx(xVal)}" cy="${yToPx(cum)}" r="6" fill="var(--c2)" stroke="var(--card)" stroke-width="2"/>`;
+  html+=`<text x="${(L+R)/2}" y="${H-6}" text-anchor="middle" font-size="11">Latency (ms)</text>`;
+  cumChart.innerHTML=html;
+
+  document.getElementById('cumX').textContent=xVal.toFixed(1);
+  document.getElementById('cumCount').textContent=cum.toFixed(1);
+  document.getElementById('cumFrac').textContent=cum.toFixed(1)+'%';
+}
+cumSlider.oninput=()=>renderCumChart(+cumSlider.value);
+renderCumChart(55);
+
+/* =================================================================
+   Dark-mode redraw
+   ================================================================= */
+if(window.matchMedia){
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{
+    renderKHistogram(+kSlider.value);
+    renderGpuChart(gpuChart,gpuMode);
+    renderGpuChart(document.getElementById('gpuPoly'),'poly');
+    renderComparison(document.getElementById('histoWrong'),'wrong');
+    renderComparison(document.getElementById('histoRight'),'right');
+    renderCumChart(+cumSlider.value);
+  });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Probability and Statistics 1 — Chapter 2 · Session 3</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<style>
+:root{
+  --bg:#f4f6fb; --card:#ffffff; --ink:#1f2a44; --muted:#5d6b88;
+  --blue:#2f5fa8; --blue-soft:#e8f0fc; --green:#2e7d5b; --green-soft:#e6f4ed;
+  --purple:#6b4fa3; --purple-soft:#efeaf8; --orange:#c26a1b; --orange-soft:#fdf0e1;
+  --red:#b83b4a; --line:#dfe5f1;
+  --c1:#2f5fa8; --c2:#e08a3c; --c3:#3fa37a; --c4:#9a6bc4;
+}
+@media (prefers-color-scheme: dark){
+  :root{--bg:#121826;--card:#1b2336;--ink:#e6ebf7;--muted:#9aa8c7;--blue:#7aa7ee;--blue-soft:#202c47;
+  --green:#6cc79e;--green-soft:#1d3329;--purple:#b79af0;--purple-soft:#2a2342;--orange:#f0a766;--orange-soft:#3a2a1a;--line:#2c3856;--red:#ef7f8c}
+}
+html{ font-size: clamp(17px, 1.25vmin + 8px, 30px); }
+*{ box-sizing:border-box; }
+html, body{ height:100%; margin:0; }
+body{
+  font-family:"Inter","Segoe UI",system-ui,-apple-system,sans-serif;
+  background:var(--bg); color:var(--ink);
+  font-size:1rem; line-height:1.55; overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+#progress{ position:fixed; top:0; left:0; height:5px; width:0;
+  background:linear-gradient(90deg,var(--blue),var(--c3)); transition:width .35s; z-index:10; }
+header.top{ position:fixed; top:5px; left:0; right:0; display:flex;
+  justify-content:space-between; align-items:center;
+  padding:.55rem clamp(1rem, 3vw, 2.5rem); font-size:.82rem; color:var(--muted);
+  z-index:5; gap:1rem; }
+#deck{ position:absolute; inset: clamp(42px, 6vh, 64px) 0 clamp(64px, 8vh, 96px) 0; overflow:hidden; }
+.slide{ position:absolute; inset:0; overflow-y:auto;
+  padding: clamp(1rem, 2.4vh, 1.8rem) clamp(1.2rem, 4vw, 4rem) 2.5rem;
+  opacity:0; pointer-events:none; transform:translateX(30px);
+  transition:opacity .35s, transform .35s; }
+.slide.active{ opacity:1; pointer-events:auto; transform:none; }
+.wrap{ max-width:min(1500px, 95vw); margin:0 auto; }
+h1{ font-size:2.6rem; margin:.2em 0; letter-spacing:-.02em; line-height:1.1; }
+h2{ font-size:1.85rem; margin:0 0 .55em; letter-spacing:-.01em; line-height:1.2; }
+h2 .num{ display:inline-block; background:var(--blue); color:#fff;
+  border-radius:.35rem; padding:0 .55em; margin-right:.4em;
+  font-size:.62em; vertical-align:middle; }
+.sub{ color:var(--muted); font-size:1.08rem; }
+.card{ background:var(--card); border:1px solid var(--line); border-radius:1rem;
+  padding: clamp(.85rem, 1.5vh, 1.2rem) clamp(1.05rem, 1.8vw, 1.5rem);
+  margin: clamp(.65rem, 1.1vh, 1rem) 0; box-shadow:0 2px 10px rgba(30,50,90,.05); }
+.def  { border-left:5px solid var(--blue);   background:var(--blue-soft); }
+.ex   { border-left:5px solid var(--green);  background:var(--green-soft); }
+.prop { border-left:5px solid var(--purple); background:var(--purple-soft); }
+.rem  { border-left:5px solid var(--orange); background:var(--orange-soft); }
+.warn { border-left:5px solid var(--red);    background:#fef2f2; }
+@media (prefers-color-scheme: dark){ .warn{ background:#2a1a1a; } }
+.tag{ display:inline-block; font-weight:700; font-size:.72rem; letter-spacing:.06em;
+  text-transform:uppercase; margin-bottom:.35em; padding:.1em .65em;
+  border-radius:.4rem; color:#fff; }
+.def  .tag{ background:var(--blue); }
+.ex   .tag{ background:var(--green); }
+.prop .tag{ background:var(--purple); }
+.rem  .tag{ background:var(--orange); }
+.warn .tag{ background:var(--red); }
+.grid2{ display:grid; grid-template-columns:1fr 1fr; gap: clamp(.7rem, 1.2vw, 1.1rem); }
+.grid3{ display:grid; grid-template-columns:repeat(3,1fr); gap: clamp(.7rem, 1.2vw, 1.1rem); }
+@media(max-width:820px){ .grid2, .grid3{ grid-template-columns:1fr; } h1{ font-size:2rem; } h2{ font-size:1.5rem; } }
+button{ font:inherit; cursor:pointer; border:1px solid var(--blue);
+  background:var(--card); color:var(--blue); padding:.45rem .9rem;
+  border-radius:.6rem; transition:.15s; font-size:.92rem; }
+button:hover{ background:var(--blue); color:#fff; }
+button.primary{ background:var(--blue); color:#fff; }
+button.primary:hover{ filter:brightness(1.1); }
+button.on{ background:var(--blue); color:#fff; }
+.hidden{ display:none; }
+nav.bottom{ position:fixed; bottom:0; left:0; right:0; height: clamp(64px, 8vh, 96px);
+  display:flex; align-items:center; justify-content:center;
+  gap: clamp(.8rem, 2vw, 1.6rem); padding: 0 clamp(1rem, 3vw, 2.5rem);
+  background:var(--card); border-top:1px solid var(--line); z-index:6; }
+#dots{ display:flex; gap:.35rem; flex-wrap:wrap; justify-content:center; max-width:65vw; }
+#dots span{ width:.55rem; height:.55rem; border-radius:50%;
+  background:var(--line); cursor:pointer; transition:.2s; }
+#dots span.active{ background:var(--blue); transform:scale(1.5); }
+.chain-info{ min-height:2.4rem; text-align:center; color:var(--muted); font-size:.92rem; }
+table{ border-collapse:collapse; width:100%; }
+th, td{ padding:.5rem .65rem; text-align:center; border-bottom:1px solid var(--line); }
+th{ color:var(--blue); font-size:.92rem; }
+td:first-child, th:first-child{ text-align:left; }
+tfoot td{ font-weight:700; border-top:2px solid var(--blue); border-bottom:none; }
+.badge{ display:inline-block; padding:.15rem .7rem; border-radius:99px;
+  font-size:.85rem; font-weight:600; background:var(--green-soft); color:var(--green); }
+svg text{ fill:var(--ink); font-family:inherit; }
+.hint{ color:var(--muted); font-size:.9rem; }
+.sumlist li{ margin:.4rem 0; }
+.sl{ display:grid; grid-template-columns:10rem 1fr 4rem; gap:.6rem;
+  align-items:center; margin:.35rem 0; }
+.sl input{ width:100%; }
+@media(max-width:760px){ .sl{ grid-template-columns:1fr 1fr 3.5rem; } }
+.chart-svg{ width:100%; height:auto; display:block; max-width:100%; }
+.num-in{
+  width:4.5rem; font:inherit; font-size:.95rem;
+  border:1px solid var(--line); border-radius:.5rem;
+  padding:.25rem .5rem; text-align:center;
+  background:var(--card); color:var(--ink);
+}
+.num-in:focus{ outline:none; border-color:var(--blue); }
+.big-res{
+  font-size:1.7rem; font-weight:800; color:var(--blue);
+  text-align:center; line-height:1.1;
+  font-variant-numeric:tabular-nums;
+}
+.mid-res{
+  font-size:1.1rem; font-weight:700; color:var(--ink);
+  text-align:center; font-variant-numeric:tabular-nums;
+}
+.chain-flow{
+  display:flex; align-items:center; justify-content:center;
+  gap:.6rem; flex-wrap:wrap; margin:1rem 0;
+}
+.chain-item{
+  background:var(--card); border:1px solid var(--line);
+  border-radius:.7rem; padding:.7rem 1.1rem; text-align:center;
+  min-width:6rem;
+}
+.chain-item .name{ font-size:.78rem; font-weight:700; color:var(--muted);
+  text-transform:uppercase; letter-spacing:.06em; }
+.chain-item .val{ font-size:1.4rem; font-weight:800;
+  font-variant-numeric:tabular-nums; color:var(--blue); }
+.chain-op{ font-size:1.5rem; font-weight:800; color:var(--muted); }
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+<header class="top">
+  <span id="part">Probability and Statistics 1 · Chapter 2 · Session 3</span>
+  <span id="counter"></span>
+</header>
+
+<div id="deck">
+
+<!-- =================== SLIDE 1 — TITLE =================== -->
+<section class="slide" data-part="Chapter 2 · Session 3">
+<div class="wrap" style="text-align:center;padding-top:7vh">
+  <div class="sub">Probability and Statistics 1 · 2026–2027</div>
+  <h1>Chapter 2 · Session 3<br>Position parameters</h1>
+  <p class="sub">Mode · arithmetic, weighted, geometric, harmonic and quadratic means · median · quartiles</p>
+  <div class="card" style="display:inline-block;text-align:left;max-width:42rem">
+    <b>Today you will be able to:</b>
+    <ul>
+      <li>locate the centre of a distribution with the right parameter;</li>
+      <li>choose among the four means depending on what is averaged;</li>
+      <li>compute the median and the quartiles, discrete and grouped.</li>
+    </ul>
+  </div>
+  <p class="hint">Session 2 built the tables. Today we attach numbers to them.</p>
+</div>
+</section>
+
+<!-- =================== SLIDE 2 — WHY =================== -->
+<section class="slide" data-part="Chapter 2 · Session 3">
+<div class="wrap">
+  <h2><span class="num">1</span>Why a position parameter?</h2>
+  <p>
+    A table or a histogram is still too much to compare, transmit and test.
+    A <b>position parameter</b> answers one question: <i>around which value is the distribution centred?</i>
+  </p>
+  <div class="card ex">
+    <span class="tag">Two models, same mean</span><br>
+    Model A: mean accuracy \(0.87\), standard deviation \(0.002\) — stable.<br>
+    Model B: mean accuracy \(0.87\), standard deviation \(0.05\) — oscillates between \(0.81\) and \(0.93\).
+    <p class="hint">Same mean, different engineering decision. Position alone is never enough.</p>
+  </div>
+  <div class="card ex">
+    <span class="tag">One service, two summaries</span><br>
+    Mean latency \(55\) ms, but 99th percentile \(220\) ms.
+    <p class="hint">The mean describes the average user; the percentile describes the user who leaves. A report that gives only one is incomplete.</p>
+  </div>
+  <div class="card prop">
+    <span class="tag">What a position parameter costs</span><br>
+    A single number is a <b>loss of information</b>. The mean, median, mode and the four means of the next slides all answer <i>“what is a typical value?”</i> — but they answer it differently, and for some distributions their values diverge enormously. <b>Choosing the parameter is part of the statistical work.</b>
+  </div>
+</div>
+</section>
+
+<!-- =================== SLIDE 3 — MODE =================== -->
+<section class="slide" data-part="Chapter 2 · Session 3">
+<div class="wrap">
+  <h2><span class="num">2</span>The mode</h2>
+  <div class="card def">
+    <span class="tag">Definition</span><br>
+    The <b>mode</b> \(Mo\) is the modality (or the value, or the class) whose absolute frequency \(n_i\) is the largest. It may fail to be unique — when it is, it is called the <i>dominant</i> modality.
+  </div>
+  <div class="grid2">
+    <div class="card ex">
+      <span class="tag">Discrete</span><br>
+      GPUs per node: \(1\!:\!12,\;2\!:\!20,\;4\!:\!16,\;8\!:\!9,\;16\!:\!3\). Largest frequency \(20\) at value \(2\), so \(Mo=2\).
+    </div>
+    <div class="card ex">
+      <span class="tag">Bimodal</span><br>
+      Platforms: Discord \(12\), Instagram \(12\), TikTok \(10\), X \(6\). Two modalities share the maximum: the mode is the set \(\{\)Discord, Instagram\(\}\).
+    </div>
+  </div>
+  <div class="card def">
+    <span class="tag">Continuous — interpolation</span><br>
+    Let \([a_i,b_i[\) be the modal class, of amplitude \(a=b_i-a_i\) and frequency \(n_i\). With neighbours \(n_{i-1},n_{i+1}\) and \(e_1=n_i-n_{i-1}\), \(e_2=n_i-n_{i+1}\):
+    \[
+      Mo \;=\; a_i + \frac{e_1}{e_1+e_2}\,a .
+    \]
+  </div>
+  <div class="card">
+    <b>Try it.</b> Latency modal class \([50;60[\) (amplitude \(a=10\)). Change the neighbours:
+    <div style="display:flex;gap:1rem;align-items:center;flex-wrap:wrap;justify-content:center;margin:.6rem 0">
+      <label>\(n_{i-1}=\) <input class="num-in" type="number" id="mPrev" value="22" min="0" max="41" step="1"></label>
+      <label>\(n_i=\) <input class="num-in" type="number" id="mI" value="41" min="1" max="100" step="1"></label>
+      <label>\(n_{i+1}=\) <input class="num-in" type="number" id="mNext" value="21" min="0" max="41" step="1"></label>
+    </div>
+    <div class="big-res" id="mRes">Mo ≈ 54.87 ms</div>
+    <div class="chain-info" id="mNote">The mode is close to the centre of the modal class because the two neighbours are almost equal.</div>
+  </div>
+  <div class="card rem">
+    <span class="tag">Use and weakness</span><br>
+    The mode is the <b>only</b> position parameter available for a nominal character — computing a mean or a median requires additions or an order, neither of which exists on labels. It is the only one readable directly on a bar chart or histogram (the tallest bar). Its weakness: it is <b>unstable</b>; a small change in the sample can move it between two close modalities.
+  </div>
+</div>
+</section>
+
+<!-- =================== SLIDE 4 — ARITHMETIC MEAN =================== -->
+<section class="slide" data-part="Chapter 2 · Session 3">
+<div class="wrap">
+  <h2><span class="num">3</span>The arithmetic mean</h2>
+  <div class="card def">
+    <span class="tag">Definition</span><br>
+    For modalities \(x_1,\dots,x_k\) observed with frequencies \(n_1,\dots,n_k\) on a sample of size \(n=\sum n_i\):
+    \[
+      \bar X \;=\; \frac{1}{n}\sum_{i=1}^{k} n_i x_i .
+    \]
+  </div>
+  <div class="grid2">
+    <div class="card ex">
+      <span class="tag">Simple example</span><br>
+      Ten accuracies: \(0.865,\,0.871,\,0.869,\,0.874,\,0.870,\,0.868,\,0.872,\,0.869,\,0.873,\,0.869\).
+      Here \(n_i=1\) for each, so
+      \[
+        \bar X = \tfrac{1}{10}(8.700) = 0.870 .
+      \]
+    </div>
+    <div class="card ex">
+      <span class="tag">Grouped example</span><br>
+      GPUs \(1,2,4,8,16\) with frequencies \(12,20,16,9,3\):
+      \[
+        \bar X = \tfrac{1}{60}\bigl(12\!\cdot\!1+20\!\cdot\!2+16\!\cdot\!4+9\!\cdot\!8+3\!\cdot\!16\bigr) \approx 3.93 .
+      \]
+    </div>
+  </div>
+  <div class="card prop">
+    <span class="tag">Three properties used constantly</span>
+    <ol style="margin:.3rem 0 0; padding-left:1.3rem;">
+      <li><b>Balance.</b> \(\sum_i n_i(x_i-\bar X)=0\) — deviations cancel exactly.</li>
+      <li><b>Linearity.</b> If \(Y=aX+b\), then \(\bar Y=a\bar X+b\).</li>
+      <li><b>Combination.</b> Two disjoint samples of sizes \(n_1,n_2\) and means \(\bar X_1,\bar X_2\) combine to
+        \( \bar X = (n_1\bar X_1 + n_2\bar X_2)/(n_1+n_2)\).</li>
+    </ol>
+  </div>
+  <div class="card rem">
+    <span class="tag">Sensitivity to outliers</span><br>
+    The arithmetic mean is <b>not robust</b>: a single observation far from the rest displaces it. This is why service-level objectives are stated in <i>percentiles</i>, not in means.
+  </div>
+</div>
+</section>
+
+<!-- =================== SLIDE 5 — WEIGHTED MEAN =================== -->
+<section class="slide" data-part="Chapter 2 · Session 3">
+<div class="wrap">
+  <h2><span class="num">4</span>The weighted mean</h2>
+  <div class="card def">
+    <span class="tag">Definition</span><br>
+    For values \(x_i\) with positive weights \(w_i\):
+    \[
+      \bar X_w \;=\; \frac{\sum_i w_i x_i}{\sum_i w_i}.
+    \]
+    When the weights are the absolute frequencies, \(\bar X_w\) coincides with the arithmetic mean.
+  </div>
+  <div class="card">
+    <b>Try it — imbalanced accuracy.</b> Three classes with sizes \(w_1,w_2,w_3\) and per-class accuracies \(a_1,a_2,a_3\).
+    <div class="grid3" style="margin-top:.6rem;">
+      <div>
+        <div class="sl"><label>Size \(w_1\)</label><input type="range" id="w1" min="10" max="2000" step="10" value="1000"><b id="w1v">1000</b></div>
+        <div class="sl"><label>Acc \(a_1\)</label><input type="range" id="a1" min="50" max="100" step="1" value="95"><b id="a1v">.95</b></div>
+      </div>
+      <div>
+        <div class="sl"><label>Size \(w_2\)</label><input type="range" id="w2" min="10" max="2000" step="10" value="100"><b id="w2v">100</b></div>
+        <div class="sl"><label>Acc \(a_2\)</label><input type="range" id="a2" min="50" max="100" step="1" value="80"><b id="a2v">.80</b></div>
+      </div>
+      <div>
+        <div class="sl"><label>Size \(w_3\)</label><input type="range" id="w3" min="10" max="2000" step="10" value="100"><b id="w3v">100</b></div>
+        <div class="sl"><label>Acc \(a_3\)</label><input type="range" id="a3" min="50" max="100" step="1" value="60"><b id="a3v">.60</b></div>
+      </div>
+    </div>
+    <div class="grid2" style="margin-top:.8rem;">
+      <div>
+        <div class="hint" style="text-align:center">Unweighted mean</div>
+        <div class="mid-res" id="wUnw">0.783</div>
+      </div>
+      <div>
+        <div class="hint" style="text-align:center">Weighted (true) accuracy</div>
+        <div class="big-res" id="wWtd">0.908</div>
+      </div>
+    </div>
+    <p class="hint" style="text-align:center; margin-top:.4rem;">
+      The unweighted mean overweights the minority classes and is <b>not</b> the accuracy of the model on the dataset.
+    </p>
+  </div>
+  <div class="card rem">
+    <span class="tag">Latency of a service</span><br>
+    Endpoint <code>/health</code>: \(1000\) req/min at \(5\) ms. Endpoint <code>/search</code>: \(100\) req/min at \(200\) ms.
+    Unweighted mean of the two latencies \(= 102.5\) ms, but the true mean latency over all requests is
+    \((1000\cdot 5 + 100\cdot 200)/1100 \approx 22.7\) ms. <b>The mean latency of a service is always weighted by its traffic.</b>
+  </div>
+</div>
+</section>
+
+<!-- =================== SLIDE 6 — GEOMETRIC / HARMONIC =================== -->
+<section class="slide" data-part="Chapter 2 · Session 3">
+<div class="wrap">
+  <h2><span class="num">5</span>Geometric and harmonic means</h2>
+  <div class="grid2">
+    <div class="card def">
+      <span class="tag">Geometric mean</span><br>
+      For strictly positive \(x_1,\dots,x_n\):
+      \[
+        G = \bigl(x_1 x_2\cdots x_n\bigr)^{1/n} = \exp\!\Bigl(\tfrac{1}{n}\sum_i \ln x_i\Bigr).
+      \]
+      <p class="hint">The mean of <b>products and ratios</b>: speedups, growth rates, relative errors.</p>
+    </div>
+    <div class="card def">
+      <span class="tag">Harmonic mean</span><br>
+      For strictly positive \(x_1,\dots,x_n\):
+      \[
+        H = \frac{n}{\displaystyle\sum_{i=1}^n 1/x_i}.
+      \]
+      <p class="hint">The mean of <b>rates</b>: throughput, F1 score, average speed.</p>
+    </div>
+  </div>
+
+  <div class="grid2" style="margin-top:.6rem;">
+    <div class="card">
+      <b>Try it — speedups.</b> Five benchmark runs of a compilation pass:
+      <div style="display:flex;gap:.35rem;flex-wrap:wrap;justify-content:center;margin:.5rem 0;">
+        <input class="num-in" type="number" id="g1" value="1.5" step="0.1" min="0.1">
+        <input class="num-in" type="number" id="g2" value="1.8" step="0.1" min="0.1">
+        <input class="num-in" type="number" id="g3" value="2.0" step="0.1" min="0.1">
+        <input class="num-in" type="number" id="g4" value="1.6" step="0.1" min="0.1">
+        <input class="num-in" type="number" id="g5" value="1.4" step="0.1" min="0.1">
+      </div>
+      <div class="grid2">
+        <div><div class="hint" style="text-align:center">Geometric \(G\)</div><div class="big-res" id="gG">1.646</div></div>
+        <div><div class="hint" style="text-align:center">Arithmetic \(\bar X\)</div><div class="mid-res" id="gA">1.660</div></div>
+      </div>
+      <p class="hint" style="text-align:center; margin-top:.4rem;">The geometric mean treats a \(2\times\) speedup and a \(0.5\times\) slowdown symmetrically; the arithmetic mean does not.</p>
+    </div>
+    <div class="card">
+      <b>Try it — F1 score.</b> Precision \(P\) and recall \(R\):
+      <div class="sl"><label>Precision \(P\)</label><input type="range" id="f1P" min="5" max="100" step="1" value="80"><b id="f1Pv">0.80</b></div>
+      <div class="sl"><label>Recall \(R\)</label><input type="range" id="f1R" min="5" max="100" step="1" value="60"><b id="f1Rv">0.60</b></div>
+      <div class="grid2" style="margin-top:.4rem;">
+        <div><div class="hint" style="text-align:center">F1 = harmonic mean</div><div class="big-res" id="f1H">0.686</div></div>
+        <div><div class="hint" style="text-align:center">Arithmetic mean</div><div class="mid-res" id="f1A">0.700</div></div>
+      </div>
+      <p class="hint" style="text-align:center; margin-top:.4rem;">The harmonic mean <b>penalises</b> imbalance — high precision and low recall is a useless system, and F1 says so.</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- =================== SLIDE 7 — QUADRATIC / CHAIN =================== -->
+<section class="slide" data-part="Chapter 2 · Session 3">
+<div class="wrap">
+  <h2><span class="num">6</span>Quadratic mean and the chain of means</h2>
+  <div class="card def">
+    <span class="tag">Quadratic mean (root mean square)</span><br>
+    \[
+      Q \;=\; \sqrt{\frac{1}{n}\sum_{i=1}^n x_i^2}.
+    \]
+    <p class="hint">The mean of <b>squares</b>: it penalises large values quadratically. It is the standard loss for regression (RMSE).</p>
+  </div>
+
+  <div class="grid2" style="margin-top:.6rem;">
+    <div class="card">
+      <b>Try it — regression residuals.</b> Four residuals:
+      <div style="display:flex;gap:.35rem;flex-wrap:wrap;justify-content:center;margin:.5rem 0;">
+        <input class="num-in" type="number" id="r1" value="0.01"  step="0.005">
+        <input class="num-in" type="number" id="r2" value="-0.02" step="0.005">
+        <input class="num-in" type="number" id="r3" value="-0.05" step="0.005">
+        <input class="num-in" type="number" id="r4" value="0.03"  step="0.005">
+      </div>
+      <div class="grid2">
+        <div><div class="hint" style="text-align:center">MAE</div><div class="mid-res" id="rMAE">0.0275</div></div>
+        <div><div class="hint" style="text-align:center">RMSE \(Q\)</div><div class="big-res" id="rRMS">0.0312</div></div>
+      </div>
+      <p class="hint" style="text-align:center; margin-top:.4rem;">RMSE ≥ MAE always — larger residuals weigh more.</p>
+    </div>
+    <div class="card">
+      <b>Try it — chain of means.</b> Enter three positive numbers:
+      <div style="display:flex;gap:.35rem;flex-wrap:wrap;justify-content:center;margin:.5rem 0;">
+        <input class="num-in" type="number" id="chA" value="1" step="0.1" min="0.01">
+        <input class="num-in" type="number" id="chB" value="4" step="0.1" min="0.01">
+        <input class="num-in" type="number" id="chC" value="9" step="0.1" min="0.01">
+      </div>
+      <div class="chain-flow">
+        <div class="chain-item"><div class="name">H</div><div class="val" id="chH">2.20</div></div>
+        <div class="chain-op">≤</div>
+        <div class="chain-item"><div class="name">G</div><div class="val" id="chG">3.30</div></div>
+        <div class="chain-op">≤</div>
+        <div class="chain-item"><div class="name">X̄</div><div class="val" id="chM">4.67</div></div>
+        <div class="chain-op">≤</div>
+        <div class="chain-item"><div class="name">Q</div><div class="val" id="chQ">5.72</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card prop">
+    <span class="tag">Chain of means</span><br>
+    For strictly positive values,
+    \[
+      H \;\le\; G \;\le\; \bar X \;\le\; Q ,
+    \]
+    with equality in each comparison if and only if all the values are equal.
+    <p class="hint" style="margin-top:.4rem;">Choosing the mean is choosing <i>where</i> in this chain the summary of the data sits — and this choice depends on the question.</p>
+  </div>
+</div>
+</section>
+
+<!-- =================== SLIDE 8 — MEDIAN =================== -->
+<section class="slide" data-part="Chapter 2 · Session 3">
+<div class="wrap">
+  <h2><span class="num">7</span>The median</h2>
+  <div class="card def">
+    <span class="tag">Definition</span><br>
+    For sorted observations \(x_{(1)}\le\dots\le x_{(n)}\):
+    \[
+      Me =
+      \begin{cases}
+        x_{((n+1)/2)} & n \text{ odd},\\[3pt]
+        \dfrac{x_{(n/2)}+x_{(n/2+1)}}{2} & n \text{ even}.
+      \end{cases}
+    \]
+    It divides the sample into two halves: at most half the observations are below \(Me\), at most half above.
+  </div>
+
+  <div class="card">
+    <b>Try it — the robustness demo.</b> Fifteen values; drag the last one from \(3\) up to \(100\):
+    <div class="sl">
+      <label>Last value</label>
+      <input type="range" id="medSlider" min="3" max="100" step="0.5" value="5">
+      <b id="medVal">5.0</b>
+    </div>
+    <svg id="medSvg" class="chart-svg" viewBox="0 0 560 170"></svg>
+    <div class="grid2" style="margin-top:.5rem;">
+      <div><div class="hint" style="text-align:center">Mean</div><div class="mid-res" id="medMean">7.27</div></div>
+      <div><div class="hint" style="text-align:center">Median</div><div class="big-res" id="medMed">7.00</div></div>
+    </div>
+    <p class="hint" style="text-align:center; margin-top:.4rem;">The mean doubles. The median moves by one rank, because it only depends on positions, not on values.</p>
+  </div>
+
+  <div class="card def">
+    <span class="tag">Median of a grouped variable — interpolation</span><br>
+    Let \([a_i,b_i[\) be the median class (first class with \(n_i^{\nearrow}\ge n/2\)), of frequency \(n_i\), amplitude \(a\), and cumulative \(N_{i-1}\) of the previous class:
+    \[
+      Me = a_i + \frac{n/2 - N_{i-1}}{n_i}\,a .
+    \]
+    For the latency table: \(n/2=50\), median class \([50;60[\), \(N_{i-1}=30\), \(n_i=41\), \(a=10\):
+    \[
+      Me = 50 + \frac{50-30}{41}\times 10 \approx 54.88\ \text{ms}.
+    \]
+  </div>
+</div>
+</section>
+
+<!-- =================== SLIDE 9 — QUARTILES =================== -->
+<section class="slide" data-part="Chapter 2 · Session 3">
+<div class="wrap">
+  <h2><span class="num">8</span>Quartiles and interquartile range</h2>
+  <div class="card def">
+    <span class="tag">Definition</span><br>
+    The <b>quartiles</b> \(Q_1, Q_2, Q_3\) divide the sorted sample into four equal-sized parts. By construction \(Q_2 = Me\).
+  </div>
+  <div class="card def">
+    <span class="tag">Continuous case — interpolation</span><br>
+    With \([a_i,b_i[\) the class containing the fraction \(n/4\) (for \(Q_1\)) or \(3n/4\) (for \(Q_3\)):
+    \[
+      Q_1 = a_i + \frac{n/4 - N_{i-1}}{n_i}\,a,
+      \qquad
+      Q_3 = a_i + \frac{3n/4 - N_{i-1}}{n_i}\,a .
+    \]
+    <b>For the latency table:</b>
+    <ul style="margin:.4rem 0 0; padding-left:1.2rem;">
+      <li>\(Q_1\): class \([40;50[\), \(N_{i-1}=8\), \(n_i=22\) → \(Q_1 = 40 + \tfrac{17}{22}\times 10 \approx 47.73\) ms.</li>
+      <li>\(Q_3\): class \([60;70[\), \(N_{i-1}=71\), \(n_i=21\) → \(Q_3 = 60 + \tfrac{4}{21}\times 10 \approx 61.90\) ms.</li>
+    </ul>
+  </div>
+  <div class="card prop">
+    <span class="tag">Interquartile range</span><br>
+    \[
+      IQR \;=\; Q_3 - Q_1 .
+    \]
+    For the latency data: \(IQR = 61.90 - 47.73 \approx 14.18\) ms — half of the requests lie in a band of about \(14\) ms.
+  </div>
+  <div class="card rem">
+    <span class="tag">Quartiles are percentiles</span><br>
+    \(p_{25}\), \(p_{50}=Me\), \(p_{75}\). This is exactly why service-level objectives are stated as <b>percentiles</b> — \(p_{99}\) is the value below which \(99\,\%\) of requests are served — and not as a mean and a standard deviation. Quartiles are <b>robust</b>: outliers cannot move them more than one rank.
+  </div>
+</div>
+</section>
+
+<!-- =================== SLIDE 10 — SUMMARY =================== -->
+<section class="slide" data-part="Chapter 2 · Session 3">
+<div class="wrap">
+  <h2><span class="num">✓</span>Summary of Session 3</h2>
+  <div class="card">
+    <b>Position parameters at a glance</b>
+    <table style="margin-top:.5rem;">
+      <thead>
+        <tr><th>Parameter</th><th>Answers</th><th>Best for</th><th>Weakness</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><b>Mode</b></td><td>most frequent value</td><td>nominal · dominant modality</td><td>unstable</td></tr>
+        <tr><td><b>Arithmetic mean</b> \(\bar X\)</td><td>balance point</td><td>linear operations</td><td>sensitive to outliers</td></tr>
+        <tr><td><b>Weighted mean</b></td><td>aggregation with unequal importance</td><td>imbalanced data · mixed traffic</td><td>sensitive to outliers</td></tr>
+        <tr><td><b>Geometric mean</b> \(G\)</td><td>mean of ratios</td><td>speedups, growth rates</td><td>positive values only</td></tr>
+        <tr><td><b>Harmonic mean</b> \(H\)</td><td>mean of rates</td><td>F1, throughput</td><td>positive values only</td></tr>
+        <tr><td><b>Quadratic mean</b> \(Q\)</td><td>mean of squares</td><td>RMSE, error analysis</td><td>very sensitive to outliers</td></tr>
+        <tr><td><b>Median</b> \(Me\)</td><td>middle value</td><td>skewed · robust reports</td><td>needs an order</td></tr>
+        <tr><td><b>Quartiles, IQR</b></td><td>central spread</td><td>SLOs, boxplots</td><td>—</td></tr>
+      </tbody>
+    </table>
+    <p class="hint" style="margin-top:.5rem;">Chain of means: \(H \le G \le \bar X \le Q\).</p>
+  </div>
+  <div class="card warn">
+    <span class="tag">Common mistakes</span>
+    <ul class="sumlist">
+      <li>Using the <b>arithmetic mean for a rate</b> — the average of \(10\) and \(1000\) req/s is \(19.8\) (harmonic), not \(505\).</li>
+      <li>Using the <b>arithmetic mean for a ratio of ratios</b> — the average of \(2\times\) and \(0.5\times\) speedups is \(1\) (geometric), not \(1.25\).</li>
+      <li>Forgetting to <b>weight</b> on an imbalanced dataset — the unweighted mean overweights the minority classes.</li>
+      <li>Comparing <b>mean and median</b> without checking the distribution — on a skewed distribution they diverge by large factors.</li>
+      <li>Computing a <b>variance</b> (next session) from a single observation — a variance needs at least two points.</li>
+    </ul>
+  </div>
+  <p class="sub" style="text-align:center">
+    End of Session 3. Next session (Chapter 2): dispersion parameters — range, variance, standard deviation, coefficient of variation, boxplot.
+  </p>
+</div>
+</section>
+
+</div>
+
+<nav class="bottom">
+  <button id="prev">← Previous</button>
+  <div id="dots"></div>
+  <button id="next" class="primary">Next →</button>
+</nav>
+
+<script>
+/* ---------- Slide engine ---------- */
+const slides=[...document.querySelectorAll('.slide')];
+let cur=0;
+const dots=document.getElementById('dots');
+slides.forEach((s,i)=>{const d=document.createElement('span');d.onclick=()=>go(i);dots.appendChild(d)});
+function go(i){
+  cur=Math.max(0,Math.min(slides.length-1,i));
+  slides.forEach((s,k)=>s.classList.toggle('active',k===cur));
+  [...dots.children].forEach((d,k)=>d.classList.toggle('active',k===cur));
+  document.getElementById('progress').style.width=((cur+1)/slides.length*100)+'%';
+  document.getElementById('counter').textContent=(cur+1)+' / '+slides.length;
+  document.getElementById('part').textContent='Probability and Statistics 1 · '+slides[cur].dataset.part;
+  slides[cur].scrollTop=0;
+  document.getElementById('prev').style.visibility=cur?'visible':'hidden';
+  document.getElementById('next').style.visibility=cur<slides.length-1?'visible':'hidden';
+}
+document.getElementById('prev').onclick=()=>go(cur-1);
+document.getElementById('next').onclick=()=>go(cur+1);
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='INPUT'&&e.target.type!=='range')return;
+  if(e.key==='ArrowRight'||e.key==='PageDown')go(cur+1);
+  if(e.key==='ArrowLeft'||e.key==='PageUp')go(cur-1);
+  if(e.key==='f'||e.key==='F'){
+    if(!document.fullscreenElement)document.documentElement.requestFullscreen();
+    else document.exitFullscreen();
+  }
+});
+
+/* ---------- KaTeX ---------- */
+function typeset(){
+  if(window.renderMathInElement){
+    renderMathInElement(document.body,{delimiters:[
+      {left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false}],throwOnError:false});
+  }
+}
+window.addEventListener('load',()=>{typeset();go(0)});
+go(0);
+
+/* =================================================================
+   SLIDE 3 — Mode interpolation calculator
+   ================================================================= */
+function updateMode(){
+  const prev=+document.getElementById('mPrev').value||0;
+  const ni  =+document.getElementById('mI').value  ||1;
+  const next=+document.getElementById('mNext').value||0;
+  const res=document.getElementById('mRes');
+  const note=document.getElementById('mNote');
+  const e1=ni-prev, e2=ni-next;
+  if(e1<=0 || e2<=0){
+    res.textContent='—';
+    note.innerHTML='<span class="bad">The modal-class assumption is violated: \(n_i\) must be strictly larger than both neighbours.</span>';
+    return;
+  }
+  const Mo=50+(e1/(e1+e2))*10;
+  res.textContent='Mo ≈ '+Mo.toFixed(2)+' ms';
+  if(Math.abs(e1-e2)<0.5)note.textContent='The two neighbours are almost equal → the mode sits at the centre of the modal class.';
+  else if(e1>e2)note.textContent='The previous class is closer → the mode is pulled towards the lower bound.';
+  else note.textContent='The next class is closer → the mode is pulled towards the upper bound.';
+}
+['mPrev','mI','mNext'].forEach(id=>document.getElementById(id).oninput=updateMode);
+updateMode();
+
+/* =================================================================
+   SLIDE 5 — Weighted mean accuracy
+   ================================================================= */
+function updateWeighted(){
+  const g=id=>+document.getElementById(id).value;
+  const w1=g('w1'),w2=g('w2'),w3=g('w3');
+  const a1=g('a1')/100,a2=g('a2')/100,a3=g('a3')/100;
+  document.getElementById('w1v').textContent=w1;
+  document.getElementById('w2v').textContent=w2;
+  document.getElementById('w3v').textContent=w3;
+  document.getElementById('a1v').textContent='.'+g('a1');
+  document.getElementById('a2v').textContent='.'+g('a2');
+  document.getElementById('a3v').textContent='.'+g('a3');
+  const unweighted=(a1+a2+a3)/3;
+  const weighted=(w1*a1+w2*a2+w3*a3)/(w1+w2+w3);
+  document.getElementById('wUnw').textContent=unweighted.toFixed(3);
+  document.getElementById('wWtd').textContent=weighted.toFixed(3);
+}
+['w1','w2','w3','a1','a2','a3'].forEach(id=>document.getElementById(id).oninput=updateWeighted);
+updateWeighted();
+
+/* =================================================================
+   SLIDE 6 — Geometric mean of speedups
+   ================================================================= */
+function updateGeo(){
+  const v=[1,2,3,4,5].map(i=>Math.max(0.01,+document.getElementById('g'+i).value||0.01));
+  const G=Math.pow(v.reduce((a,b)=>a*b,1),1/5);
+  const A=v.reduce((a,b)=>a+b,0)/5;
+  document.getElementById('gG').textContent=G.toFixed(3);
+  document.getElementById('gA').textContent=A.toFixed(3);
+}
+['g1','g2','g3','g4','g5'].forEach(id=>document.getElementById(id).oninput=updateGeo);
+updateGeo();
+
+/* =================================================================
+   SLIDE 6 — F1 score (harmonic mean)
+   ================================================================= */
+function updateF1(){
+  const P=+document.getElementById('f1P').value/100;
+  const R=+document.getElementById('f1R').value/100;
+  document.getElementById('f1Pv').textContent=P.toFixed(2);
+  document.getElementById('f1Rv').textContent=R.toFixed(2);
+  const H=2*P*R/(P+R);
+  const A=(P+R)/2;
+  document.getElementById('f1H').textContent=H.toFixed(3);
+  document.getElementById('f1A').textContent=A.toFixed(3);
+}
+['f1P','f1R'].forEach(id=>document.getElementById(id).oninput=updateF1);
+updateF1();
+
+/* =================================================================
+   SLIDE 7 — RMSE / MAE and chain of means
+   ================================================================= */
+function updateRMSE(){
+  const v=[1,2,3,4].map(i=>+document.getElementById('r'+i).value||0);
+  const MAE=v.reduce((s,x)=>s+Math.abs(x),0)/v.length;
+  const RMS=Math.sqrt(v.reduce((s,x)=>s+x*x,0)/v.length);
+  document.getElementById('rMAE').textContent=MAE.toFixed(4);
+  document.getElementById('rRMS').textContent=RMS.toFixed(4);
+}
+['r1','r2','r3','r4'].forEach(id=>document.getElementById(id).oninput=updateRMSE);
+updateRMSE();
+
+function updateChain(){
+  const a=Math.max(0.01,+document.getElementById('chA').value||1);
+  const b=Math.max(0.01,+document.getElementById('chB').value||1);
+  const c=Math.max(0.01,+document.getElementById('chC').value||1);
+  const H=3/(1/a+1/b+1/c);
+  const G=Math.cbrt(a*b*c);
+  const A=(a+b+c)/3;
+  const Q=Math.sqrt((a*a+b*b+c*c)/3);
+  document.getElementById('chH').textContent=H.toFixed(2);
+  document.getElementById('chG').textContent=G.toFixed(2);
+  document.getElementById('chM').textContent=A.toFixed(2);
+  document.getElementById('chQ').textContent=Q.toFixed(2);
+}
+['chA','chB','chC'].forEach(id=>document.getElementById(id).oninput=updateChain);
+updateChain();
+
+/* =================================================================
+   SLIDE 8 — Median robustness demo
+   ================================================================= */
+const BASE_VALS=[3,4,5,5,6,6,7,7,8,8,9,10,12,14];
+function drawMedianDemo(xVal){
+  const vals=[...BASE_VALS,xVal].sort((a,b)=>a-b);
+  const n=vals.length;
+  const sum=vals.reduce((s,v)=>s+v,0);
+  const mean=sum/n;
+  const median=vals[Math.floor(n/2)];
+
+  const svg=document.getElementById('medSvg');
+  const W=560,H=170,L=60,R=520,T=25,B=110;
+  const xToPx=v=>L+(v/105)*(R-L);
+  const yBase=B;
+
+  let html='';
+  // axis
+  html+=`<line x1="${L}" x2="${R}" y1="${yBase}" y2="${yBase}" stroke="var(--muted)"/>`;
+  [0,10,20,30,40,50,60,70,80,90,100].forEach(v=>{
+    html+=`<line x1="${xToPx(v)}" x2="${xToPx(v)}" y1="${yBase}" y2="${yBase+5}" stroke="var(--muted)"/>`;
+    html+=`<text x="${xToPx(v)}" y="${yBase+20}" text-anchor="middle" font-size="10">${v}</text>`;
+  });
+  // stacked circles (values)
+  const seen={};
+  vals.forEach(v=>{
+    seen[v]=seen[v]||0;
+    const y=yBase-8-seen[v]*9;
+    seen[v]++;
+    html+=`<circle cx="${xToPx(v)}" cy="${y}" r="4" fill="var(--c1)"/>`;
+  });
+  // mean line (orange)
+  html+=`<line x1="${xToPx(mean)}" x2="${xToPx(mean)}" y1="${T}" y2="${yBase+5}" stroke="var(--c2)" stroke-width="2" stroke-dasharray="4,3"/>`;
+  html+=`<text x="${xToPx(mean)}" y="${T-4}" text-anchor="middle" font-size="10" fill="var(--c2)" font-weight="700">mean</text>`;
+  // median line (green)
+  html+=`<line x1="${xToPx(median)}" x2="${xToPx(median)}" y1="${T}" y2="${yBase+5}" stroke="var(--c3)" stroke-width="2" stroke-dasharray="4,3"/>`;
+  html+=`<text x="${xToPx(median)}" y="${T-4}" text-anchor="middle" font-size="10" fill="var(--c3)" font-weight="700">median</text>`;
+
+  svg.innerHTML=html;
+  document.getElementById('medVal').textContent=xVal.toFixed(1);
+  document.getElementById('medMean').textContent=mean.toFixed(2);
+  document.getElementById('medMed').textContent=median.toFixed(2);
+}
+const medSlider=document.getElementById('medSlider');
+medSlider.oninput=()=>drawMedianDemo(+medSlider.value);
+drawMedianDemo(+medSlider.value);
+
+/* =================================================================
+   Dark-mode redraw
+   ================================================================= */
+if(window.matchMedia){
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{
+    drawMedianDemo(+medSlider.value);
+  });
+}
+</script>
+</body>
+</html>
