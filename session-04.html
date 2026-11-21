@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Probability and Statistics 1 — Chapter 2 · Session 4</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<style>
+:root{
+  --bg:#f4f6fb; --card:#ffffff; --ink:#1f2a44; --muted:#5d6b88;
+  --blue:#2f5fa8; --blue-soft:#e8f0fc; --green:#2e7d5b; --green-soft:#e6f4ed;
+  --purple:#6b4fa3; --purple-soft:#efeaf8; --orange:#c26a1b; --orange-soft:#fdf0e1;
+  --red:#b83b4a; --line:#dfe5f1;
+  --c1:#2f5fa8; --c2:#e08a3c; --c3:#3fa37a; --c4:#9a6bc4;
+}
+@media (prefers-color-scheme: dark){
+  :root{--bg:#121826;--card:#1b2336;--ink:#e6ebf7;--muted:#9aa8c7;--blue:#7aa7ee;--blue-soft:#202c47;
+  --green:#6cc79e;--green-soft:#1d3329;--purple:#b79af0;--purple-soft:#2a2342;--orange:#f0a766;--orange-soft:#3a2a1a;--line:#2c3856;--red:#ef7f8c}
+}
+html{ font-size: clamp(17px, 1.25vmin + 8px, 30px); }
+*{ box-sizing:border-box; }
+html, body{ height:100%; margin:0; }
+body{
+  font-family:"Inter","Segoe UI",system-ui,-apple-system,sans-serif;
+  background:var(--bg); color:var(--ink);
+  font-size:1rem; line-height:1.55; overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+#progress{ position:fixed; top:0; left:0; height:5px; width:0;
+  background:linear-gradient(90deg,var(--blue),var(--c3)); transition:width .35s; z-index:10; }
+header.top{ position:fixed; top:5px; left:0; right:0; display:flex;
+  justify-content:space-between; align-items:center;
+  padding:.55rem clamp(1rem, 3vw, 2.5rem); font-size:.82rem; color:var(--muted);
+  z-index:5; gap:1rem; }
+#deck{ position:absolute; inset: clamp(42px, 6vh, 64px) 0 clamp(64px, 8vh, 96px) 0; overflow:hidden; }
+.slide{ position:absolute; inset:0; overflow-y:auto;
+  padding: clamp(1rem, 2.4vh, 1.8rem) clamp(1.2rem, 4vw, 4rem) 2.5rem;
+  opacity:0; pointer-events:none; transform:translateX(30px);
+  transition:opacity .35s, transform .35s; }
+.slide.active{ opacity:1; pointer-events:auto; transform:none; }
+.wrap{ max-width:min(1500px, 95vw); margin:0 auto; }
+h1{ font-size:2.6rem; margin:.2em 0; letter-spacing:-.02em; line-height:1.1; }
+h2{ font-size:1.85rem; margin:0 0 .55em; letter-spacing:-.01em; line-height:1.2; }
+h2 .num{ display:inline-block; background:var(--blue); color:#fff;
+  border-radius:.35rem; padding:0 .55em; margin-right:.4em;
+  font-size:.62em; vertical-align:middle; }
+.sub{ color:var(--muted); font-size:1.08rem; }
+.card{ background:var(--card); border:1px solid var(--line); border-radius:1rem;
+  padding: clamp(.85rem, 1.5vh, 1.2rem) clamp(1.05rem, 1.8vw, 1.5rem);
+  margin: clamp(.65rem, 1.1vh, 1rem) 0; box-shadow:0 2px 10px rgba(30,50,90,.05); }
+.def  { border-left:5px solid var(--blue);   background:var(--blue-soft); }
+.ex   { border-left:5px solid var(--green);  background:var(--green-soft); }
+.prop { border-left:5px solid var(--purple); background:var(--purple-soft); }
+.rem  { border-left:5px solid var(--orange); background:var(--orange-soft); }
+.warn { border-left:5px solid var(--red);    background:#fef2f2; }
+@media (prefers-color-scheme: dark){ .warn{ background:#2a1a1a; } }
+.tag{ display:inline-block; font-weight:700; font-size:.72rem; letter-spacing:.06em;
+  text-transform:uppercase; margin-bottom:.35em; padding:.1em .65em;
+  border-radius:.4rem; color:#fff; }
+.def  .tag{ background:var(--blue); }
+.ex   .tag{ background:var(--green); }
+.prop .tag{ background:var(--purple); }
+.rem  .tag{ background:var(--orange); }
+.warn .tag{ background:var(--red); }
+.grid2{ display:grid; grid-template-columns:1fr 1fr; gap: clamp(.7rem, 1.2vw, 1.1rem); }
+.grid3{ display:grid; grid-template-columns:repeat(3,1fr); gap: clamp(.7rem, 1.2vw, 1.1rem); }
+@media(max-width:820px){ .grid2, .grid3{ grid-template-columns:1fr; } h1{ font-size:2rem; } h2{ font-size:1.5rem; } }
+button{ font:inherit; cursor:pointer; border:1px solid var(--blue);
+  background:var(--card); color:var(--blue); padding:.45rem .9rem;
+  border-radius:.6rem; transition:.15s; font-size:.92rem; }
+button:hover{ background:var(--blue); color:#fff; }
+button.primary{ background:var(--blue); color:#fff; }
+button.primary:hover{ filter:brightness(1.1); }
+button.on{ background:var(--blue); color:#fff; }
+.hidden{ display:none; }
+nav.bottom{ position:fixed; bottom:0; left:0; right:0; height: clamp(64px, 8vh, 96px);
+  display:flex; align-items:center; justify-content:center;
+  gap: clamp(.8rem, 2vw, 1.6rem); padding: 0 clamp(1rem, 3vw, 2.5rem);
+  background:var(--card); border-top:1px solid var(--line); z-index:6; }
+#dots{ display:flex; gap:.35rem; flex-wrap:wrap; justify-content:center; max-width:65vw; }
+#dots span{ width:.55rem; height:.55rem; border-radius:50%;
+  background:var(--line); cursor:pointer; transition:.2s; }
+#dots span.active{ background:var(--blue); transform:scale(1.5); }
+.chain-info{ min-height:2.4rem; text-align:center; color:var(--muted); font-size:.92rem; }
+table{ border-collapse:collapse; width:100%; }
+th, td{ padding:.5rem .65rem; text-align:center; border-bottom:1px solid var(--line); }
+th{ color:var(--blue); font-size:.92rem; }
+td:first-child, th:first-child{ text-align:left; }
+tfoot td{ font-weight:700; border-top:2px solid var(--blue); border-bottom:none; }
+.badge{ display:inline-block; padding:.15rem .7rem; border-radius:99px;
+  font-size:.85rem; font-weight:600; background:var(--green-soft); color:var(--green); }
+svg text{ fill:var(--ink); font-family:inherit; }
+.hint{ color:var(--muted); font-size:.9rem; }
+.sumlist li{ margin:.4rem 0; }
+.sl{ display:grid; grid-template-columns:12rem 1fr 4rem; gap:.6rem;
+  align-items:center; margin:.35rem 0; }
+.sl input{ width:100%; }
+@media(max-width:760px){ .sl{ grid-template-columns:1fr 1fr 3.5rem; } }
+.chart-svg{ width:100%; height:auto; display:block; max-width:100%; }
+.num-in{
+  width:4.2rem; font:inherit; font-size:.92rem;
+  border:1px solid var(--line); border-radius:.5rem;
+  padding:.25rem .4rem; text-align:center;
+  background:var(--card); color:var(--ink);
+}
+.num-in:focus{ outline:none; border-color:var(--blue); }
+.big-res{
+  font-size:1.8rem; font-weight:800; color:var(--blue);
+  text-align:center; line-height:1.1;
+  font-variant-numeric:tabular-nums;
+}
+.mid-res{
+  font-size:1.1rem; font-weight:700; color:var(--ink);
+  text-align:center; font-variant-numeric:tabular-nums;
+}
+.formula-line{
+  display:flex; justify-content:space-between; align-items:center;
+  padding:.35rem .8rem; background:var(--card);
+  border-radius:.5rem; margin:.25rem 0; font-size:.9rem;
+}
+.formula-line b{ font-variant-numeric:tabular-nums; }
+.kv{ display:flex; gap:.8rem; flex-wrap:wrap; justify-content:center; }
+.kv > div{ background:var(--card); border:1px solid var(--line);
+  border-radius:.6rem; padding:.4rem 1rem; text-align:center; min-width:5rem; }
+.kv b{ display:block; font-size:1.3rem; color:var(--blue); line-height:1.1; }
+.freq-table td{ padding:.35rem .5rem; }
+.freq-table .num-in{ width:3.4rem; }
+.step-btn{ display:inline-flex; gap:.4rem; align-items:center; }
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+<header class="top">
+  <span id="part">Probability and Statistics 1 · Chapter 2 · Session 4</span>
+  <span id="counter"></span>
+</header>
+
+<div id="deck">
+
+<!-- =================== SLIDE 1 — TITLE =================== -->
+<section class="slide" data-part="Chapter 2 · Session 4">
+<div class="wrap" style="text-align:center;padding-top:7vh">
+  <div class="sub">Probability and Statistics 1 · 2026–2027</div>
+  <h1>Chapter 2 · Session 4<br>Dispersion parameters</h1>
+  <p class="sub">Range · mean absolute deviation · variance and standard deviation · coefficient of variation · boxplot and outliers</p>
+  <div class="card" style="display:inline-block;text-align:left;max-width:42rem">
+    <b>Today you will be able to:</b>
+    <ul>
+      <li>quantify how far observations lie from the centre;</li>
+      <li>compute and interpret variance, standard deviation and coefficient of variation;</li>
+      <li>build and read a boxplot, and flag outliers with Tukey's rule.</li>
+    </ul>
+  </div>
+  <p class="hint">Position alone describes a cloud by its centre. Dispersion tells us whether the cloud is dense or scattered.</p>
+</div>
+</section>
+
+<!-- =================== SLIDE 2 — WHY DISPERSION =================== -->
+<section class="slide" data-part="Chapter 2 · Session 4">
+<div class="wrap">
+  <h2><span class="num">1</span>Same centre, different clouds</h2>
+  <div class="grid2">
+    <div class="card ex">
+      <span class="tag">Two models, same mean accuracy</span><br>
+      Model A: \(\bar X = 0.87\), \(\sigma = 0.002\) — stable.<br>
+      Model B: \(\bar X = 0.87\), \(\sigma = 0.05\) — oscillates between \(0.81\) and \(0.93\).
+      <p class="hint">Same mean, different engineering decision. Model B cannot be deployed without a variance-reduction effort.</p>
+    </div>
+    <div class="card ex">
+      <span class="tag">Two services, same mean latency</span><br>
+      Service A: every request served in \(55\) ms.<br>
+      Service B: half served in \(10\) ms, half in \(100\) ms.
+      <p class="hint">Both have a mean of \(55\) ms. They are not the same service.</p>
+    </div>
+  </div>
+  <div class="card prop">
+    <span class="tag">What dispersion answers</span><br>
+    A dispersion parameter answers one question: <i>how far from the centre are the observations spread?</i> Each parameter (range, MAD, variance, CV, IQR) uses a different notion of distance, and each has its own domain of validity.
+  </div>
+  <div class="card rem">
+    <span class="tag">The rule of the course</span><br>
+    A single number is never sufficient. A report that gives only a mean, without a dispersion, describes the data through one aspect only — and usually the wrong one for the question asked.
+  </div>
+</div>
+</section>
+
+<!-- =================== SLIDE 3 — RANGE + MAD =================== -->
+<section class="slide" data-part="Chapter 2 · Session 4">
+<div class="wrap">
+  <h2><span class="num">2</span>Range and mean absolute deviation</h2>
+  <div class="grid2">
+    <div class="card def">
+      <span class="tag">Range</span><br>
+      \[
+        r \;=\; x_{\max} - x_{\min}.
+      \]
+      <p class="hint">Latency: \(80-30=50\) ms. Accuracy: \(0.874-0.865=0.009\).</p>
+    </div>
+    <div class="card def">
+      <span class="tag">Mean absolute deviation</span><br>
+      \[
+        e_X \;=\; \frac{1}{n}\sum_{i=1}^{k} n_i\,|x_i - \bar X|.
+      \]
+      <p class="hint">The average distance from the mean, in the unit of the character.</p>
+    </div>
+  </div>
+  <div class="card ex">
+    <span class="tag">MAD on the ten accuracies (n=10, x̄=0.870)</span><br>
+    Deviations in absolute value: \(0.005,0.002,0.001,0.001,0.001,0,0.001,0.002,0.003,0.004\). Their sum is \(0.020\), so
+    \[
+      e_X \;=\; \frac{0.020}{10} \;=\; 0.002 .
+    \]
+    Interpretation: on average, a training run is off by two thousandths of accuracy from the mean.
+  </div>
+  <div class="grid2" style="margin-top:.4rem;">
+    <div class="card prop">
+      <span class="tag">Strength of MAD</span>
+      <ul style="margin:.3rem 0 0; padding-left:1.2rem;">
+        <li>Same unit as the character → directly interpretable.</li>
+        <li>Robust: one outlier does not dominate.</li>
+      </ul>
+    </div>
+    <div class="card warn">
+      <span class="tag">Weakness of MAD</span>
+      <ul style="margin:.3rem 0 0; padding-left:1.2rem;">
+        <li>The absolute value is not differentiable → no decomposition.</li>
+        <li>Does not combine linearly when samples are merged.</li>
+        <li>Cannot be extended to a covariance / correlation.</li>
+      </ul>
+      <p class="hint" style="margin-top:.3rem;">This is why the next parameter replaces \(|x_i - \bar X|\) by \((x_i-\bar X)^2\).</p>
+    </div>
+  </div>
+  <div class="card warn" style="margin-top:.4rem;">
+    <span class="tag">Weakness of the range</span><br>
+    The range depends on only two observations — the most extreme ones. A single outlier destroys it. It is useful as a measure of the total extent of the data (for choosing histogram bounds), not as a measure of dispersion.
+  </div>
+</div>
+</section>
+
+<!-- =================== SLIDE 4 — VARIANCE + KÖNIG =================== -->
+<section class="slide" data-part="Chapter 2 · Session 4">
+<div class="wrap">
+  <h2><span class="num">3</span>Variance and standard deviation</h2>
+  <div class="grid2">
+    <div class="card def">
+      <span class="tag">Variance</span><br>
+      \[
+        \operatorname{Var}(X) = \sigma_X^2 = \frac{1}{n}\sum_{i=1}^{k} n_i\,(x_i - \bar X)^2 .
+      \]
+    </div>
+    <div class="card def">
+      <span class="tag">Standard deviation</span><br>
+      \[
+        \sigma_X \;=\; \sqrt{\operatorname{Var}(X)} .
+      \]
+      <p class="hint">In the same unit as the character — this is why it is preferred in reports.</p>
+    </div>
+  </div>
+  <div class="card prop">
+    <span class="tag">König's formula — one-pass computation</span><br>
+    \[
+      \operatorname{Var}(X) \;=\; \frac{1}{n}\sum_{i=1}^{k} n_i x_i^2 \;-\; \bar X^{\,2}
+      \;=\; \overline{x^2} - \bar x^2 .
+    \]
+    <p class="hint">The variance is the mean of the squares minus the square of the mean. No need to know \(\bar X\) first — the formula is valid in a single pass and extends to grouped data by replacing \(x_i\) with the class centre.</p>
+  </div>
+  <div class="card">
+    <b>Try it — König on the latency table.</b> Edit the five frequencies:
+    <table class="freq-table" style="margin-top:.5rem;">
+      <thead><tr><th>Class</th><th>Centre x<sub>i</sub></th><th>n<sub>i</sub></th></tr></thead>
+      <tbody id="varFreqBody"></tbody>
+    </table>
+    <div class="kv" style="margin-top:.8rem;">
+      <div><span class="hint">n</span><b id="varN">100</b></div>
+      <div><span class="hint">x̄</span><b id="varMean">54.9</b></div>
+      <div><span class="hint">mean of x²</span><b id="varMSq">3121</b></div>
+      <div><span class="hint">σ²</span><b id="varVar">107.0</b></div>
+      <div><span class="hint">σ</span><b id="varStd">10.34</b></div>
+      <div><span class="hint">CV</span><b id="varCV">18.8%</b></div>
+    </div>
+    <div style="margin-top:.6rem;">
+      <div class="formula-line"><span>\(\sum n_i x_i\)</span><b id="varSumX">5 490</b></div>
+      <div class="formula-line"><span>\(\sum n_i x_i^2\)</span><b id="varSumX2">312 100</b></div>
+      <div class="formula-line"><span>σ² = (Σ n<sub>i</sub> x<sub>i</sub>²)/n − x̄²</span><b id="varFormula">3121 − 3014.0 = 107.0</b></div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- =================== SLIDE 5 — PROPERTIES =================== -->
+<section class="slide" data-part="Chapter 2 · Session 4">
+<div class="wrap">
+  <h2><span class="num">4</span>Properties of the variance</h2>
+  <div class="card prop">
+    <span class="tag">Four properties used constantly</span>
+    <ol style="margin:.4rem 0 0; padding-left:1.3rem; line-height:1.8;">
+      <li>\(\operatorname{Var}(X) \ge 0\), with equality iff all observations are equal.</li>
+      <li><b>Invariance by translation:</b> \(\operatorname{Var}(X+b) = \operatorname{Var}(X)\).</li>
+      <li><b>Homogeneity of degree two:</b> \(\operatorname{Var}(aX) = a^2\operatorname{Var}(X)\), hence \(\sigma_{aX+b} = |a|\,\sigma_X\).</li>
+      <li><b>Combination of disjoint samples:</b>
+        \[
+          \operatorname{Var}(X) \;=\; \frac{n_1\operatorname{Var}(X_1)+n_2\operatorname{Var}(X_2)}{n_1+n_2}
+          \;+\; \frac{n_1 n_2}{(n_1+n_2)^2}(\bar X_1 - \bar X_2)^2 .
+        \]
+      </li>
+    </ol>
+  </div>
+  <div class="grid2">
+    <div class="card ex">
+      <span class="tag">Property (iii) in action</span><br>
+      A latency \(X\) has \(\sigma_X = 10.34\) ms. Convert to seconds: \(Y = X/1000\), so \(\sigma_Y = 10.34/1000 \approx 0.0103\) s.
+      <p class="hint">The standard deviation transforms like a <i>length</i>, not like a squared length — which is why σ, not σ², is reported in engineering.</p>
+    </div>
+    <div class="card ex">
+      <span class="tag">Property (iv) in action</span><br>
+      Two regions serve a service: region 1 (\(n_1=60\), \(\bar X_1=40\), \(\sigma_1=5\)) and region 2 (\(n_2=40\), \(\bar X_2=70\), \(\sigma_2=8\)).
+      <p class="hint">
+        Total variance = weighted within-variance + between-group variance:
+        \[
+          \frac{60\cdot 25 + 40\cdot 64}{100} + \frac{60\cdot 40}{100^2}(40-70)^2 = 40.6 + 216 \approx 257 .
+        \]
+        The <b>between</b> term dominates: the two regions are far apart, so most of the total variance is the difference of the means, not the dispersion inside each region.
+      </p>
+    </div>
+  </div>
+  <div class="card rem">
+    <span class="tag">Why property (iv) matters</span><br>
+    It is the seed of the <b>analysis of variance</b> and of the decomposition of the variance of a bivariate series into "within-group" and "between-group" parts. Every chapter of inferential statistics uses it.
+  </div>
+</div>
+</section>
+
+<!-- =================== SLIDE 6 — CV =================== -->
+<section class="slide" data-part="Chapter 2 · Session 4">
+<div class="wrap">
+  <h2><span class="num">5</span>Coefficient of variation</h2>
+  <div class="card def">
+    <span class="tag">Definition</span><br>
+    For a character with \(\bar X > 0\) and standard deviation \(\sigma_X\):
+    \[
+      CV_X \;=\; \frac{\sigma_X}{\bar X}.
+    \]
+    Often expressed as a percentage: \(CV_X = 100\,\sigma_X/\bar X\). It is <b>dimensionless</b>.
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <b>Three characters, three units — σ alone cannot compare them</b>
+      <table style="margin-top:.5rem;">
+        <thead><tr><th>Character</th><th>\(\bar X\)</th><th>σ</th><th>CV</th></tr></thead>
+        <tbody>
+          <tr><td>Accuracy</td><td>0.870</td><td>0.0025</td><td><b>0.29%</b></td></tr>
+          <tr><td>Latency (ms)</td><td>54.9</td><td>10.34</td><td><b>18.8%</b></td></tr>
+          <tr><td>GPUs per node</td><td>3.93</td><td>3.57</td><td><b>90.8%</b></td></tr>
+        </tbody>
+      </table>
+      <p class="hint">σ says latency is more dispersed than accuracy — but by how much? CV answers: <b>65× more dispersed, relatively</b>.</p>
+    </div>
+
+    <div class="card">
+      <b>Try it.</b> Where does your CV fall on the conventional scale?
+      <div class="sl">
+        <label>Your CV</label>
+        <input type="range" id="cvSlider" min="0" max="100" step="1" value="50">
+        <b id="cvVal">50%</b>
+      </div>
+      <svg id="cvAxis" class="chart-svg" viewBox="0 0 560 190"></svg>
+      <div class="chain-info" id="cvNote"></div>
+    </div>
+  </div>
+
+  <div class="card rem">
+    <span class="tag">Conventions of interpretation</span><br>
+    \(CV \le 0.25\): <b>homogeneous</b> &nbsp;·&nbsp; \(0.25 < CV \le 0.80\): <b>moderately scattered</b> &nbsp;·&nbsp; \(CV > 0.80\): <b>very heterogeneous</b>.
+    These are conventions, not theorems; they give a common vocabulary to reports.
+  </div>
+  <div class="card warn">
+    <span class="tag">When CV is meaningless</span><br>
+    It requires \(\bar X > 0\), which excludes characters centred on zero or taking negative values (returns, errors). It is also meaningless if the zero of the scale is arbitrary (temperature in °C, relative score differences).
+  </div>
+</div>
+</section>
+
+<!-- =================== SLIDE 7 — BOXPLOT =================== -->
+<section class="slide" data-part="Chapter 2 · Session 4">
+<div class="wrap">
+  <h2><span class="num">6</span>The boxplot — built step by step</h2>
+  <p>Construction of the boxplot for the recommendation endpoint (20 values). Click <b>Next step</b> to reveal each component.</p>
+
+  <div class="card">
+    <svg id="boxplotSvg" class="chart-svg" viewBox="0 0 560 190"></svg>
+    <div style="display:flex; gap:.6rem; justify-content:center; align-items:center; margin-top:.6rem; flex-wrap:wrap;">
+      <button id="bpReset">↺ Reset</button>
+      <button class="primary step-btn" id="bpNext">Next step →</button>
+      <span class="hint" id="bpStepLabel">Step 0 / 5 — raw data</span>
+    </div>
+    <div class="chain-info" id="bpNote">20 sorted observations from 30 to 90. Next: build the box from Q₁ to Q₃.</div>
+  </div>
+
+  <div class="card rem">
+    <span class="tag">Five numbers, one picture</span><br>
+    The boxplot summarises \(x_{\min}\), \(Q_1\), \(Me\), \(Q_3\), \(x_{\max}\) on a single axis, and flags the observations far from the box. It is the only representation in this chapter that superimposes position, dispersion, asymmetry and outliers on one axis.
+  </div>
+</div>
+</section>
+
+<!-- =================== SLIDE 8 — OUTLIERS =================== -->
+<section class="slide" data-part="Chapter 2 · Session 4">
+<div class="wrap">
+  <h2><span class="num">7</span>Outliers and Tukey's 1.5·IQR rule</h2>
+  <div class="card def">
+    <span class="tag">Definition — the fences</span><br>
+    \[
+      L = Q_1 - k \cdot IQR, \qquad U = Q_3 + k \cdot IQR .
+    \]
+    Standard convention: \(k = 1.5\). The <b>whiskers</b> extend from \(Q_1\) to the smallest observation \(\ge L\), and from \(Q_3\) to the largest observation \(\le U\). Any observation <b>strictly outside</b> \([L, U]\) is drawn as an <b>outlier</b>.
+  </div>
+
+  <div class="card">
+    <b>Try it.</b> Move the multiplier \(k\) and watch the fences on three endpoints.
+    <div class="sl">
+      <label>Multiplier k</label>
+      <input type="range" id="outK" min="0.5" max="3" step="0.1" value="1.5">
+      <b id="outKVal">1.5</b>
+    </div>
+    <svg id="outSvg" class="chart-svg" viewBox="0 0 560 320"></svg>
+    <div class="kv" id="outCounts"></div>
+    <p class="hint" style="text-align:center; margin-top:.4rem;">
+      At \(k = 1.5\) (Tukey's convention), the health-check endpoint has no outlier, the search endpoint has 1, and the recommendation endpoint flags its heavy right tail.
+    </p>
+  </div>
+
+  <div class="card rem">
+    <span class="tag">An outlier is not an error</span><br>
+    The rule flags atypical observations for inspection; it does not say they are wrong. Deleting an outlier without examination is a form of data manipulation. Report it, inspect it, document what you did with it — do not silently drop it.
+  </div>
+</div>
+</section>
+
+<!-- =================== SLIDE 9 — WHICH PARAMETER =================== -->
+<section class="slide" data-part="Chapter 2 · Session 4">
+<div class="wrap">
+  <h2><span class="num">8</span>Which parameter for which question?</h2>
+  <div class="grid2">
+    <div class="card">
+      <b>Position parameters</b>
+      <table style="margin-top:.4rem; font-size:.88rem;">
+        <thead><tr><th>Parameter</th><th>Best for</th><th>Weakness</th></tr></thead>
+        <tbody>
+          <tr><td>Mode</td><td>nominal data</td><td>unstable</td></tr>
+          <tr><td>Arithmetic mean</td><td>symmetric data</td><td>outliers</td></tr>
+          <tr><td>Weighted mean</td><td>imbalanced groups</td><td>outliers</td></tr>
+          <tr><td>Geometric mean</td><td>ratios, growth</td><td>positive only</td></tr>
+          <tr><td>Harmonic mean</td><td>rates (F1)</td><td>positive only</td></tr>
+          <tr><td>Quadratic mean</td><td>RMSE</td><td>outliers</td></tr>
+          <tr><td>Median</td><td>skewed data</td><td>needs order</td></tr>
+          <tr><td>Quartiles</td><td>SLOs, boxplots</td><td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <b>Dispersion parameters</b>
+      <table style="margin-top:.4rem; font-size:.88rem;">
+        <thead><tr><th>Parameter</th><th>Best for</th><th>Weakness</th></tr></thead>
+        <tbody>
+          <tr><td>Range</td><td>full extent</td><td>one outlier kills it</td></tr>
+          <tr><td>MAD</td><td>typical spread, robust</td><td>no algebra</td></tr>
+          <tr><td>Variance / σ</td><td>inference, decomposition</td><td>outliers</td></tr>
+          <tr><td>CV</td><td>comparing across units</td><td>positive mean only</td></tr>
+          <tr><td>IQR</td><td>robust spread, boxplots</td><td>ignores tails</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card prop" style="margin-top:.6rem;">
+    <span class="tag">Five practical rules</span>
+    <ol style="margin:.3rem 0 0; padding-left:1.3rem;">
+      <li><b>Symmetric data, no outliers</b> → mean and standard deviation.</li>
+      <li><b>Skewed data, or heavy tails</b> → median and IQR; report the mean alongside, not instead.</li>
+      <li><b>Nominal character</b> → mode only (no mean, no median).</li>
+      <li><b>Ratios or rates</b> → geometric or harmonic mean; the arithmetic mean is the wrong average.</li>
+      <li><b>Comparison across units</b> → coefficient of variation.</li>
+    </ol>
+  </div>
+</div>
+</section>
+
+<!-- =================== SLIDE 10 — SUMMARY =================== -->
+<section class="slide" data-part="Chapter 2 · Session 4">
+<div class="wrap">
+  <h2><span class="num">✓</span>Summary of Session 4</h2>
+  <div class="card">
+    <b>Dispersion parameters at a glance</b>
+    <ul class="sumlist" style="margin-top:.4rem;">
+      <li><b>Range</b> \(r = x_{\max}-x_{\min}\) — total extent, sensitive to one value.</li>
+      <li><b>MAD</b> \(e_X = \tfrac{1}{n}\sum_i n_i|x_i-\bar X|\) — typical distance, robust, same unit.</li>
+      <li><b>Variance</b> \(\sigma_X^2 = \tfrac{1}{n}\sum_i n_i(x_i-\bar X)^2 = \overline{x^2}-\bar x^2\) (König) — the workhorse of inference.</li>
+      <li><b>Standard deviation</b> \(\sigma_X = \sqrt{\sigma_X^2}\) — in the unit of the character, transforms as \(\sigma_{aX+b}=|a|\sigma_X\).</li>
+      <li><b>Coefficient of variation</b> \(CV_X = \sigma_X/\bar X\) — dimensionless; used to compare dispersions across units.</li>
+      <li><b>IQR</b> \(= Q_3 - Q_1\) — robust spread; the box in the boxplot.</li>
+      <li><b>Boxplot</b> — superimposes \(x_{\min}, Q_1, Me, Q_3, x_{\max}\) and flags outliers beyond \(Q_{1/3} \mp 1.5\,IQR\).</li>
+    </ul>
+  </div>
+  <div class="card warn">
+    <span class="tag">Common mistakes</span>
+    <ul class="sumlist">
+      <li><b>Confusing mean and median</b> on a skewed distribution — the median is the honest summary; the mean must accompany it, not replace it.</li>
+      <li><b>Comparing standard deviations across units</b> — \(10\) ms is small for a latency, large for an accuracy. Use CV.</li>
+      <li><b>Treating outliers as errors</b> — the Tukey rule flags for inspection, not for deletion.</li>
+      <li><b>Reading a boxplot as a histogram</b> — the box contains \(50\%\) of the observations, but its <i>area</i> does not represent that fraction.</li>
+      <li><b>Computing a variance from a single observation</b> — variance is a property of a spread, not of a point.</li>
+      <li><b>Forgetting the between-group term</b> when merging samples — property (iv) of the variance is not optional.</li>
+    </ul>
+  </div>
+  <p class="sub" style="text-align:center; margin-top:1rem;">
+    End of Chapter 2. Next session (Chapter 3): combinatorics and the algebra of events.
+  </p>
+</div>
+</section>
+
+</div>
+
+<nav class="bottom">
+  <button id="prev">← Previous</button>
+  <div id="dots"></div>
+  <button id="next" class="primary">Next →</button>
+</nav>
+
+<script>
+/* ---------- Slide engine ---------- */
+const slides=[...document.querySelectorAll('.slide')];
+let cur=0;
+const dots=document.getElementById('dots');
+slides.forEach((s,i)=>{const d=document.createElement('span');d.onclick=()=>go(i);dots.appendChild(d)});
+function go(i){
+  cur=Math.max(0,Math.min(slides.length-1,i));
+  slides.forEach((s,k)=>s.classList.toggle('active',k===cur));
+  [...dots.children].forEach((d,k)=>d.classList.toggle('active',k===cur));
+  document.getElementById('progress').style.width=((cur+1)/slides.length*100)+'%';
+  document.getElementById('counter').textContent=(cur+1)+' / '+slides.length;
+  document.getElementById('part').textContent='Probability and Statistics 1 · '+slides[cur].dataset.part;
+  slides[cur].scrollTop=0;
+  document.getElementById('prev').style.visibility=cur?'visible':'hidden';
+  document.getElementById('next').style.visibility=cur<slides.length-1?'visible':'hidden';
+}
+document.getElementById('prev').onclick=()=>go(cur-1);
+document.getElementById('next').onclick=()=>go(cur+1);
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='INPUT'&&e.target.type!=='range')return;
+  if(e.key==='ArrowRight'||e.key==='PageDown')go(cur+1);
+  if(e.key==='ArrowLeft'||e.key==='PageUp')go(cur-1);
+  if(e.key==='f'||e.key==='F'){
+    if(!document.fullscreenElement)document.documentElement.requestFullscreen();
+    else document.exitFullscreen();
+  }
+});
+
+/* ---------- KaTeX ---------- */
+function typeset(){
+  if(window.renderMathInElement){
+    renderMathInElement(document.body,{delimiters:[
+      {left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false}],throwOnError:false});
+  }
+}
+window.addEventListener('load',()=>{typeset();go(0)});
+go(0);
+
+/* =================================================================
+   SLIDE 4 — König interactive
+   ================================================================= */
+const CENTRES=[35,45,55,65,75];
+const DEF_FREQS=[8,22,41,21,8];
+const varFreqBody=document.getElementById('varFreqBody');
+const LABELS=['[30;40[','[40;50[','[50;60[','[60;70[','[70;80['];
+
+function renderFreqRows(){
+  varFreqBody.innerHTML='';
+  CENTRES.forEach((c,i)=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td>${LABELS[i]}</td>
+      <td>${c}</td>
+      <td><input class="num-in" type="number" min="0" max="500" step="1" value="${DEF_FREQS[i]}" data-i="${i}" id="freq${i}"></td>
+    `;
+    varFreqBody.appendChild(tr);
+  });
+  CENTRES.forEach((_,i)=>{
+    document.getElementById('freq'+i).oninput=updateKoenig;
+  });
+}
+
+function updateKoenig(){
+  const freqs=CENTRES.map((_,i)=>Math.max(0,+document.getElementById('freq'+i).value||0));
+  const n=freqs.reduce((a,b)=>a+b,0);
+  if(n===0){
+    ['varN','varMean','varMSq','varVar','varStd','varCV','varSumX','varSumX2','varFormula'].forEach(id=>document.getElementById(id).textContent='—');
+    return;
+  }
+  const sumX=freqs.reduce((s,f,i)=>s+f*CENTRES[i],0);
+  const sumX2=freqs.reduce((s,f,i)=>s+f*CENTRES[i]*CENTRES[i],0);
+  const mean=sumX/n, meanSq=sumX2/n;
+  const variance=Math.max(0,meanSq-mean*mean);
+  const std=Math.sqrt(variance);
+  const cv=mean>0?std/mean:0;
+
+  document.getElementById('varN').textContent=n;
+  document.getElementById('varMean').textContent=mean.toFixed(2);
+  document.getElementById('varMSq').textContent=meanSq.toFixed(1);
+  document.getElementById('varVar').textContent=variance.toFixed(2);
+  document.getElementById('varStd').textContent=std.toFixed(2);
+  document.getElementById('varCV').textContent=(cv*100).toFixed(1)+'%';
+  document.getElementById('varSumX').textContent=Math.round(sumX);
+  document.getElementById('varSumX2').textContent=Math.round(sumX2).toLocaleString();
+  document.getElementById('varFormula').textContent=`${meanSq.toFixed(1)} − ${(mean*mean).toFixed(1)} = ${variance.toFixed(2)}`;
+}
+
+function resetKoenig(){
+  CENTRES.forEach((_,i)=>{
+    document.getElementById('freq'+i).value=DEF_FREQS[i];
+  });
+  updateKoenig();
+}
+renderFreqRows();
+updateKoenig();
+document.getElementById('bpReset').addEventListener('click',resetKoenig); // note: bpReset is on slide 7; will overwrite below
+
+/* =================================================================
+   SLIDE 6 — CV axis
+   ================================================================= */
+function renderCvAxis(){
+  const svg=document.getElementById('cvAxis');
+  const userCv=+document.getElementById('cvSlider').value;
+  document.getElementById('cvVal').textContent=userCv+'%';
+  const W=560,H=190,L=40,R=540,T=60,B=130;
+  const xToPx=v=>L+(v/100)*(R-L);
+  let s='';
+
+  // bands
+  s+=`<rect x="${L}" y="${T}" width="${xToPx(25)-L}" height="${B-T}" fill="rgba(46,125,91,0.10)"/>`;
+  s+=`<rect x="${xToPx(25)}" y="${T}" width="${xToPx(80)-xToPx(25)}" height="${B-T}" fill="rgba(240,167,102,0.14)"/>`;
+  s+=`<rect x="${xToPx(80)}" y="${T}" width="${R-xToPx(80)}" height="${B-T}" fill="rgba(184,59,74,0.10)"/>`;
+
+  // axis
+  s+=`<line x1="${L}" x2="${R}" y1="${B}" y2="${B}" stroke="var(--muted)"/>`;
+  [0,25,50,75,100].forEach(v=>{
+    s+=`<line x1="${xToPx(v)}" x2="${xToPx(v)}" y1="${B}" y2="${B+5}" stroke="var(--muted)"/>`;
+    s+=`<text x="${xToPx(v)}" y="${B+20}" text-anchor="middle" font-size="11">${v}%</text>`;
+  });
+
+  // band labels
+  s+=`<text x="${(L+xToPx(25))/2}" y="${T-10}" text-anchor="middle" font-size="11" fill="var(--green)" font-weight="700">homogeneous</text>`;
+  s+=`<text x="${(xToPx(25)+xToPx(80))/2}" y="${T-10}" text-anchor="middle" font-size="11" fill="var(--orange)" font-weight="700">moderately scattered</text>`;
+  s+=`<text x="${(xToPx(80)+R)/2}" y="${T-10}" text-anchor="middle" font-size="11" fill="var(--red)" font-weight="700">very heterogeneous</text>`;
+
+  // example dots
+  const examples=[
+    {name:'Accuracy', cv:0.29, color:'var(--c3)'},
+    {name:'Latency',  cv:18.8, color:'var(--c1)'},
+    {name:'GPUs',     cv:90.8, color:'var(--c4)'}
+  ];
+  examples.forEach((e,i)=>{
+    const px=xToPx(Math.min(100, e.cv));
+    const py=T+25+i*22;
+    s+=`<circle cx="${px}" cy="${py}" r="6" fill="${e.color}"/>`;
+    s+=`<text x="${px+10}" y="${py+4}" font-size="11" fill="${e.color}" font-weight="700">${e.name} (${e.cv.toFixed(1)}%)</text>`;
+  });
+
+  // user marker
+  const upx=xToPx(Math.min(100,userCv));
+  s+=`<line x1="${upx}" x2="${upx}" y1="${T}" y2="${B}" stroke="var(--c2)" stroke-width="2.5" stroke-dasharray="5,3"/>`;
+  s+=`<circle cx="${upx}" cy="${B}" r="6" fill="var(--c2)" stroke="var(--card)" stroke-width="2"/>`;
+  s+=`<text x="${upx}" y="${B-8}" text-anchor="middle" font-size="11" font-weight="700" fill="var(--c2)">your data</text>`;
+
+  svg.innerHTML=s;
+
+  const note=document.getElementById('cvNote');
+  if(userCv<=25)note.innerHTML=`<b style="color:var(--green)">CV = ${userCv}% → homogeneous.</b> The data is tightly clustered around its mean.`;
+  else if(userCv<=80)note.innerHTML=`<b style="color:var(--orange)">CV = ${userCv}% → moderately scattered.</b> The dispersion is visible but not extreme.`;
+  else note.innerHTML=`<b style="color:var(--red)">CV = ${userCv}% → very heterogeneous.</b> The observations span a wide range relative to their mean.`;
+}
+document.getElementById('cvSlider').oninput=renderCvAxis;
+renderCvAxis();
+
+/* =================================================================
+   SLIDE 7 — Boxplot step-by-step (recommendation endpoint)
+   ================================================================= */
+const REC_VALUES=[30,32,33,34,35,35,36,36,37,37,38,38,39,39,40,42,45,48,55,90];
+const REC_STATS={Q1:35, Me:37.5, Q3:39.5, IQR:4.5, L:28.25, U:46.25};
+
+function drawBoxplot(step){
+  const svg=document.getElementById('boxplotSvg');
+  const W=560,H=190,L=60,R=540,T=30,B=110;
+  const dataMin=REC_VALUES[0], dataMax=REC_VALUES[REC_VALUES.length-1];
+  const axisMin=dataMin-5, axisMax=dataMax+5;
+  const xToPx=v=>L+(v-axisMin)/(axisMax-axisMin)*(R-L);
+
+  let s='';
+  // axis
+  s+=`<line x1="${L}" x2="${R}" y1="${B}" y2="${B}" stroke="var(--muted)" stroke-width="0.8"/>`;
+  [30,40,50,60,70,80,90].forEach(v=>{
+    s+=`<line x1="${xToPx(v)}" x2="${xToPx(v)}" y1="${B}" y2="${B+5}" stroke="var(--muted)"/>`;
+    s+=`<text x="${xToPx(v)}" y="${B+18}" text-anchor="middle" font-size="10" fill="var(--muted)">${v}</text>`;
+  });
+
+  // raw points as small dots at y=B-20
+  REC_VALUES.forEach(v=>{
+    s+=`<circle cx="${xToPx(v)}" cy="${B-20}" r="3.2" fill="var(--muted)" opacity="0.7"/>`;
+  });
+
+  // box (step >= 1)
+  if(step>=1){
+    const boxH=32;
+    s+=`<rect x="${xToPx(REC_STATS.Q1)}" y="${B-20-boxH/2}" width="${xToPx(REC_STATS.Q3)-xToPx(REC_STATS.Q1)}" height="${boxH}" fill="var(--blue-soft)" stroke="var(--blue)" stroke-width="2" rx="3"/>`;
+    s+=`<text x="${xToPx(REC_STATS.Q1)}" y="${B-20-boxH/2-8}" text-anchor="middle" font-size="10" fill="var(--blue)" font-weight="700">Q₁=${REC_STATS.Q1}</text>`;
+    s+=`<text x="${xToPx(REC_STATS.Q3)}" y="${B-20-boxH/2-8}" text-anchor="middle" font-size="10" fill="var(--blue)" font-weight="700">Q₃=${REC_STATS.Q3}</text>`;
+  }
+  // median (step >= 2)
+  if(step>=2){
+    s+=`<line x1="${xToPx(REC_STATS.Me)}" x2="${xToPx(REC_STATS.Me)}" y1="${B-20-16}" y2="${B-20+16}" stroke="var(--blue)" stroke-width="3"/>`;
+    s+=`<text x="${xToPx(REC_STATS.Me)}" y="${B-20+38}" text-anchor="middle" font-size="10" fill="var(--blue)" font-weight="700">Me=${REC_STATS.Me}</text>`;
+  }
+  // fences (step >= 3) — show as dashed vertical lines
+  if(step>=3){
+    [REC_STATS.L, REC_STATS.U].forEach((f,i)=>{
+      s+=`<line x1="${xToPx(f)}" x2="${xToPx(f)}" y1="${T}" y2="${B+30}" stroke="var(--c2)" stroke-width="1.5" stroke-dasharray="4,3"/>`;
+      s+=`<text x="${xToPx(f)}" y="${T+12}" text-anchor="middle" font-size="10" fill="var(--c2)" font-weight="700">${i===0?'L':'U'}=${f}</text>`;
+    });
+  }
+  // whiskers (step >= 4)
+  if(step>=4){
+    s+=`<line x1="${xToPx(30)}" x2="${xToPx(REC_STATS.Q1)}" y1="${B-20}" y2="${B-20}" stroke="var(--blue)" stroke-width="2"/>`;
+    s+=`<line x1="${xToPx(30)}" x2="${xToPx(30)}" y1="${B-32}" y2="${B-8}" stroke="var(--blue)" stroke-width="2"/>`;
+    s+=`<line x1="${xToPx(REC_STATS.Q3)}" x2="${xToPx(45)}" y1="${B-20}" y2="${B-20}" stroke="var(--blue)" stroke-width="2"/>`;
+    s+=`<line x1="${xToPx(45)}" x2="${xToPx(45)}" y1="${B-32}" y2="${B-8}" stroke="var(--blue)" stroke-width="2"/>`;
+  }
+  // outliers (step >= 5)
+  if(step>=5){
+    [48, 55, 90].forEach(v=>{
+      s+=`<circle cx="${xToPx(v)}" cy="${B-20}" r="6" fill="var(--red)" stroke="var(--card)" stroke-width="1.5"/>`;
+    });
+  }
+
+  svg.innerHTML=s;
+  document.getElementById('bpStepLabel').textContent=`Step ${step} / 5`;
+  const notes=[
+    '20 sorted observations from 30 to 90. Next: build the box from Q₁ to Q₃.',
+    'The box goes from Q₁ = 35 to Q₃ = 39.5. It contains the middle 50 % of the data. Next: the median.',
+    'The median Me = 37.5 sits almost at the centre of the box → the bulk of the data is symmetric. Next: the fences.',
+    'Fences at L = Q₁ − 1.5·IQR = 28.25 and U = Q₃ + 1.5·IQR = 46.25. Next: draw the whiskers.',
+    'Whiskers extend from the box to the most extreme observations within the fences: 30 and 45. Next: flag the outliers.',
+    'Observations strictly outside [L, U] are flagged as outliers: 48, 55, 90. The recommendation endpoint has a heavy right tail — visible on the boxplot, invisible on the mean.'
+  ];
+  document.getElementById('bpNote').textContent=notes[step];
+}
+
+let bpStep=0;
+drawBoxplot(0);
+document.getElementById('bpNext').onclick=()=>{
+  bpStep=Math.min(5, bpStep+1);
+  drawBoxplot(bpStep);
+};
+// Override reset for boxplot
+document.getElementById('bpReset').onclick=()=>{
+  bpStep=0;
+  drawBoxplot(0);
+};
+
+/* =================================================================
+   SLIDE 8 — Tukey outlier slider
+   ================================================================= */
+const ENDPOINTS=[
+  {name:'Health check', values:[5,6,6,7,7,7,8,8,8,8,9,9,9,10,10,11,12,12,13,15], Q1:7,   Me:8.5,  Q3:10.5},
+  {name:'Search',       values:[20,22,25,28,30,32,35,38,40,42,45,48,50,55,60,65,70,80,90,120], Q1:31,  Me:43.5, Q3:57.5},
+  {name:'Recommendation', values:[30,32,33,34,35,35,36,36,37,37,38,38,39,39,40,42,45,48,55,90], Q1:35, Me:37.5, Q3:39.5}
+];
+
+function drawOutlierDemo(){
+  const k=+document.getElementById('outK').value;
+  document.getElementById('outKVal').textContent=k.toFixed(1);
+  const svg=document.getElementById('outSvg');
+  const W=560,H=320,L=110,R=540;
+  const rowYs=[50,160,270];
+  let s='';
+
+  let countsHtml='';
+  ENDPOINTS.forEach((d,i)=>{
+    const y=rowYs[i];
+    const dataMin=Math.min(...d.values), dataMax=Math.max(...d.values);
+    const pad=(dataMax-dataMin)*0.06 || 1;
+    const axisMin=dataMin-pad, axisMax=dataMax+pad;
+    const xToPx=v=>L+(v-axisMin)/(axisMax-axisMin)*(R-L);
+    const IQR=d.Q3-d.Q1;
+    const Lf=d.Q1-k*IQR, Uf=d.Q3+k*IQR;
+    const nonOut=d.values.filter(v=>v>=Lf&&v<=Uf);
+    const out=d.values.filter(v=>v<Lf||v>Uf);
+    const lowW=Math.min(...nonOut);
+    const upW=Math.max(...nonOut);
+
+    // axis
+    s+=`<line x1="${L}" x2="${R}" y1="${y}" y2="${y}" stroke="var(--muted)" stroke-width="0.6"/>`;
+    for(let t=0;t<=4;t++){
+      const v=dataMin+(dataMax-dataMin)*t/4;
+      s+=`<text x="${xToPx(v)}" y="${y+40}" text-anchor="middle" font-size="10" fill="var(--muted)">${v.toFixed(0)}</text>`;
+    }
+    // whiskers
+    s+=`<line x1="${xToPx(lowW)}" x2="${xToPx(d.Q1)}" y1="${y}" y2="${y}" stroke="var(--blue)" stroke-width="2"/>`;
+    s+=`<line x1="${xToPx(d.Q3)}" x2="${xToPx(upW)}" y1="${y}" y2="${y}" stroke="var(--blue)" stroke-width="2"/>`;
+    s+=`<line x1="${xToPx(lowW)}" x2="${xToPx(lowW)}" y1="${y-10}" y2="${y+10}" stroke="var(--blue)" stroke-width="2"/>`;
+    s+=`<line x1="${xToPx(upW)}" x2="${xToPx(upW)}" y1="${y-10}" y2="${y+10}" stroke="var(--blue)" stroke-width="2"/>`;
+    // box
+    s+=`<rect x="${xToPx(d.Q1)}" y="${y-16}" width="${xToPx(d.Q3)-xToPx(d.Q1)}" height="32" fill="var(--blue-soft)" stroke="var(--blue)" stroke-width="2" rx="3"/>`;
+    // median
+    s+=`<line x1="${xToPx(d.Me)}" x2="${xToPx(d.Me)}" y1="${y-16}" y2="${y+16}" stroke="var(--blue)" stroke-width="2.5"/>`;
+    // outliers
+    out.forEach(v=>{
+      s+=`<circle cx="${xToPx(v)}" cy="${y}" r="5.5" fill="var(--red)" stroke="var(--card)" stroke-width="1.5"/>`;
+    });
+    // label
+    s+=`<text x="${L-10}" y="${y+4}" text-anchor="end" font-size="13" font-weight="700">${d.name}</text>`;
+
+    countsHtml+=`<div><span class="hint">${d.name}</span><b>${out.length}</b></div>`;
+  });
+
+  svg.innerHTML=s;
+  document.getElementById('outCounts').innerHTML=countsHtml;
+}
+document.getElementById('outK').oninput=drawOutlierDemo;
+drawOutlierDemo();
+
+/* =================================================================
+   Dark-mode redraw
+   ================================================================= */
+if(window.matchMedia){
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{
+    renderCvAxis();
+    drawBoxplot(bpStep);
+    drawOutlierDemo();
+  });
+}
+</script>
+</body>
+</html>
